@@ -5,142 +5,189 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Dosagem de Concreto – ABCP</title>
 <style>
-:root{--bg:#f6f8f4;--card:#fff;--tx:#1d2a1d;--mut:#5d6b5d;--g:#4e7d34;--gl:#e7f0df;--bd:#d3dccb;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151a14;--card:#1e251d;--tx:#e8efe5;--mut:#9aa89a;--g:#6fa14d;--gl:#27331f;--bd:#34402f}}
-:root[data-theme="dark"]{--bg:#151a14;--card:#1e251d;--tx:#e8efe5;--mut:#9aa89a;--g:#6fa14d;--gl:#27331f;--bd:#34402f}
+:root{--bg:#f6f8f4;--card:#fff;--tx:#1d2a1d;--mut:#5d6b5d;--g:#4e7d34;--bd:#d3dccb;--red:#b3261e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151a14;--card:#1e251d;--tx:#e8efe5;--mut:#9aa89a;--g:#6fa14d;--bd:#34402f;--red:#ff8a80}}
+:root[data-theme="dark"]{--bg:#151a14;--card:#1e251d;--tx:#e8efe5;--mut:#9aa89a;--g:#6fa14d;--bd:#34402f;--red:#ff8a80}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;padding:16px}
-main{max-width:980px;margin:auto}
+main{max-width:920px;margin:auto}
 h1{font-size:1.3rem;margin:0 0 4px}
 h2{font-size:1.05rem;margin:0 0 8px;color:var(--g)}
-p.s{color:var(--mut);margin:0 0 14px;font-size:.9rem}
+h3{font-size:.95rem;margin:0 0 8px;color:var(--g);text-decoration:underline}
+.s{color:var(--mut);margin:0 0 14px;font-size:.9rem}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:16px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-label{display:flex;flex-direction:column;font-size:.78rem;color:var(--mut);gap:3px}
+.boxes{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.box{border:1px solid var(--bd);border-radius:8px;padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start}
+.box h3,.box .full{grid-column:1/-1}
+label{display:flex;flex-direction:column;font-size:.76rem;color:var(--mut);gap:3px}
+label.c{flex-direction:row;align-items:center;gap:6px}
 input,select{font:inherit;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);width:100%}
-button{font:inherit;background:var(--g);color:#fff;border:0;border-radius:8px;padding:9px 18px;cursor:pointer;margin-top:12px}
+label.c input{width:auto}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.chips button{font:inherit;border:1px solid var(--g);background:transparent;color:var(--g);border-radius:999px;padding:6px 16px;cursor:pointer}
+.chips button.on{background:var(--g);color:#fff}
 .w{overflow-x:auto}
-table{border-collapse:collapse;width:100%;min-width:640px;font-size:.88rem}
-th{background:var(--g);color:#fff;padding:7px 6px;text-align:center;font-weight:600}
-td{border:1px solid var(--bd);padding:6px;text-align:center}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:.92rem}
+th{background:var(--g);color:#fff;padding:8px 6px;text-align:center;font-weight:600}
+td{border:1px solid var(--bd);padding:7px 6px;text-align:center}
 td:first-child{background:var(--g);color:#fff;font-weight:600}
-.n{font-size:.82rem;color:var(--mut);margin-top:8px}
+sup{color:var(--red);font-weight:600}
+td.r{color:var(--red);font-weight:600}
+.n{font-size:.84rem;color:var(--mut);margin:8px 0 0}
 .n b{color:var(--tx)}
+.tr{margin:12px 0 0;padding:8px 12px;border:2px solid var(--g);border-radius:8px;display:inline-block;font-size:1.05rem}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px;font-size:.85rem;line-height:1.2}
+.fr span:first-child{border-bottom:1px solid var(--tx);padding:0 4px}
+.warn{color:var(--red);font-size:.86rem;margin:8px 0 0}
+details summary{cursor:pointer;color:var(--g);font-weight:600;margin-top:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px}
+ .btn-pdf{
+    display:inline-block;
+    padding:10px 18px;
+    background:#4e7d34;
+    color:#fff;
+    text-decoration:none;
+    border-radius:8px;
+    font-family:sans-serif;
+  }
+  .btn-pdf:hover{background:#3f6529}
 </style>
 </head>
 <body>
 <main>
 <h1>Dosagem de concreto – tabela da lição</h1>
-<p class="s">Método ABCP. Altere os dados de entrada e clique em calcular. Valores de tabelas/gráficos da ABCP são editáveis.</p>
+<p class="s">Método ABCP. Os dados iniciais são os dos slides da aula (fck 25 MPa). Altere qualquer dado e a tabela recalcula.</p>
 
 <div class="card">
-<h2>Dados de entrada</h2>
-<div class="grid">
-<label>fck (MPa), separados por vírgula<input id="fcks" value="20, 25, 35, 40"></label>
-<label>Condição de preparo (NBR 12655)
-<select id="cond"><option value="4">A – sd 4,0 MPa</option><option value="5.5">B – sd 5,5 MPa</option><option value="7">C – sd 7,0 MPa</option></select></label>
-<label>Cimento γ (kg/m³)<input id="gc" type="number" value="3050"></label>
-<label>Água (ℓ/m³) – ABCP<input id="agua" type="number" value="190"></label>
-<label>Vb brita (m³/m³) – ABCP<input id="vb" type="number" step="0.001" value="0.785"></label>
-<label>Brita γ (kg/m³)<input id="gb" type="number" value="2750"></label>
-<label>Brita compactada δ (kg/m³)<input id="dbc" type="number" value="1600"></label>
-<label>Brita 1 solta δ (kg/m³)<input id="db1" type="number" value="1470"></label>
-<label>Brita 2 solta δ (kg/m³)<input id="db2" type="number" value="1520"></label>
-<label>% brita 2<input id="pb2" type="number" value="30"></label>
-<label>Areia γ (kg/m³)<input id="ga" type="number" value="2630"></label>
-<label>Areia solta δ (kg/m³)<input id="da" type="number" value="1440"></label>
-<label>Umidade areia (%)<input id="um" type="number" value="6"></label>
+<h2>Características da dosagem</h2>
+<div class="chips" id="chips">
+<button data-f="20">20 MPa</button><button data-f="25" class="on">25 MPa</button><button data-f="30">30 MPa</button><button data-f="35">35 MPa</button><button data-f="40">40 MPa</button>
+</div>
+<div class="boxes">
+<div class="box"><h3>Concreto</h3>
+<label>fck (MPa)<input id="fck" type="number" value="25"></label>
+<label>sd (MPa)<input id="sd" type="number" step="0.1" value="5.5"></label>
+<label>Abatimento (mm)<input id="abat" type="number" value="90"></label>
+<label>Dmáx (mm)<input id="dmax" type="number" step="0.1" value="25"></label>
+<p class="n full">sd – NBR 12655: A = 4,0 · B = 5,5 · C = 7,0 MPa. Abatimento: valor central (ex.: 90 ± 30 mm).</p></div>
+<div class="box"><h3>Cimento</h3>
+<label>Tipo (CP)<select id="cp"><option value="32" selected>CP 32</option><option value="40">CP 40</option></select></label>
+<label>γ cimento (kg/m³)<input id="gc" type="number" value="3100"></label>
+<label>Água γ (kg/m³)<input id="gw" type="number" value="1000"></label></div>
+<div class="box"><h3>Areia</h3>
+<label>γ areia (kg/m³)<input id="ga" type="number" value="2650"></label>
+<label>MF<input id="mf" type="number" step="0.01" value="2.6"></label>
+<label>δ solta (kg/m³)<input id="da" type="number" value="1470"></label>
 <label>Inchamento (%)<input id="inc" type="number" value="30"></label>
-<label>Padiola: base (cm)<input id="pa" type="number" value="45"></label>
-<label>Padiola: largura (cm)<input id="pb" type="number" value="35"></label>
-<label>Cimento: saco (kg)<input id="saco" type="number" value="50"></label>
-</div>
-<button id="calc">Calcular</button>
-</div>
-
-<div class="card">
-<h2>Curva de Abrams (a/c × fcj, cimento ~40 MPa)</h2>
-<p class="s">Pontos lidos da curva ABCP; o programa interpola linearmente. Edite conforme o gráfico do seu professor (formato: fcj:a/c).</p>
-<label>Pontos<input id="curva" value="20:0.70, 25:0.62, 30:0.55, 35:0.50, 40:0.46, 45:0.43, 50:0.39, 55:0.36"></label>
+<label>Umidade (%)<input id="um" type="number" value="6"></label></div>
+<div class="box"><h3>Brita</h3>
+<label>γ brita 1 (kg/m³)<input id="gb1" type="number" value="2700"></label>
+<label>γ brita 2 (kg/m³)<input id="gb2" type="number" value="2700"></label>
+<label>δ brita 1 solta<input id="db1" type="number" value="1430"></label>
+<label>δ brita 2 solta<input id="db2" type="number" value="1400"></label>
+<label>δ b1+b2 compactada<input id="dbc" type="number" value="1500"></label>
+<label>% brita 1 (b2 = resto)<input id="pb1" type="number" value="80"></label></div>
 </div>
 
-<div id="out"></div>
+<details>
+<summary>Ajustes avançados (tabelas ABCP, curva, padiola)</summary>
+<div class="grid">
+<label>a/c manual (vazio = curva)<input id="acm" type="number" step="0.001"></label>
+<label>Água ℓ/m³ manual (vazio = tabela)<input id="aguam" type="number"></label>
+<label>Vb manual (vazio = tabela)<input id="vbm" type="number" step="0.001"></label>
+<label>Padiola base (cm)<input id="pa" type="number" value="45"></label>
+<label>Padiola largura (cm)<input id="pb" type="number" value="35"></label>
+<label>Altura máx. por padiola (cm)<input id="hmax" type="number" value="30"></label>
+<label>Saco de cimento (kg)<input id="saco" type="number" value="50"></label>
+<label class="c"><input id="trunc" type="checkbox" checked> Volumes truncados em 3 casas (como no slide)</label>
+</div>
+<p class="s" style="margin-top:10px">Curva de Abrams (fcj:a/c), com interpolação linear. No CP 32 o ponto 34,075:0,475 é o do slide (fck 25, sd 5,5); os demais são aproximados.</p>
+<label><input id="curva"></label>
+</details>
+</div>
+
+<div class="card" id="out"></div>
 
 <div class="card">
 <h2>Fontes (ABNT)</h2>
-<p class="n">fcj = fck + 1,65·sd: <b>NBR 12655</b> · cimento: <b>NBR 16697</b>, ensaio <b>NBR 7215</b>, massa específica <b>NBR 16605</b> · agregados: <b>NBR 7211</b>, granulometria/MF <b>NBR NM 248</b>, massa específica <b>NBR 16916/16917</b>, massa unitária <b>NBR 16972</b> · umidade e inchamento: <b>NBR 6467</b> · abatimento: <b>NBR 16889</b>. Tabelas de água, Vb e curva de Abrams: método ABCP (ET-67), não ABNT. Confira o a/c máximo por classe de agressividade na NBR 6118/12655.</p>
+<p class="n">fcj = fck + 1,65·sd: <b>NBR 12655</b> · cimento CP: <b>NBR 16697</b>, ensaio <b>NBR 7215</b>, massa específica <b>NBR 16605</b> · agregados: <b>NBR 7211</b>, granulometria/MF/Dmáx <b>NBR NM 248</b>, massa específica <b>NBR 16916/16917</b>, massa unitária <b>NBR 16972</b> · umidade e inchamento: <b>NBR 6467</b> · abatimento: <b>NBR 16889</b>. Água (por abatimento e Dmáx), Vb (por MF e Dmáx) e curva de Abrams vêm do método ABCP (ET-67), não da ABNT.</p>
 </div>
 </main>
-
+<a class="btn-pdf" href="https://drive.google.com/file/d/13st1kLd1NQG2K9QM6pTm8nqKXvuOpIQ2/view?usp=sharing" target="_blank" rel="noopener noreferrer">
+    Abrir PDF Base do Calculo
+  </a>
 <script>
 const $=id=>document.getElementById(id);
 const v=id=>parseFloat($(id).value);
-const f=(x,d=2)=>x.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const f=(x,d=0)=>x.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const r0=Math.round, t3=x=>Math.floor(x*1000+1e-9)/1000;
+const CURVAS={32:"25:0.59, 30:0.525, 34.075:0.475, 40:0.415, 45:0.375, 50:0.34, 55:0.31",40:"20:0.70, 25:0.62, 30:0.55, 35:0.50, 40:0.46, 45:0.43, 50:0.39, 55:0.36"};
 
-function curva(){
-  return $('curva').value.split(',').map(s=>s.trim().split(':').map(Number)).filter(p=>p.length==2&&!p.some(isNaN)).sort((a,b)=>a[0]-b[0]);
+// Tabelas ABCP (ET-67)
+const DM=[9.5,19,25,32,38];
+const AGUA=[[220,195,190,185,180],[225,200,195,190,185],[230,205,200,195,190]]; // 40-60, 60-80, 80-100 mm
+const MFS=[1.8,2.0,2.2,2.4,2.6,2.8,3.0,3.2,3.4];
+const VB=[[.645,.770,.795,.820,.845],[.625,.750,.775,.800,.825],[.605,.730,.755,.780,.805],[.585,.710,.735,.760,.785],[.565,.690,.715,.740,.765],[.545,.670,.695,.720,.745],[.525,.650,.675,.700,.725],[.505,.630,.655,.680,.705],[.485,.610,.635,.660,.685]];
+function lerp(xs,ys,x){
+  if(x<=xs[0])return ys[0]; if(x>=xs[xs.length-1])return ys[ys.length-1];
+  for(let i=1;i<xs.length;i++) if(x<=xs[i])return ys[i-1]+(ys[i]-ys[i-1])*(x-xs[i-1])/(xs[i]-xs[i-1]);
 }
+function aguaTab(abat,dmax){const k=abat<=60?0:abat<=80?1:2;return lerp(DM,AGUA[k],dmax);}
+function vbTab(mf,dmax){return lerp(DM,DM.map((_,j)=>lerp(MFS,VB.map(r=>r[j]),mf)),dmax);}
+
 function ac(fcj){
-  const c=curva();
+  const m=v('acm'); if(m>0)return m;
+  const c=$('curva').value.split(',').map(s=>s.trim().split(':').map(Number)).filter(p=>p.length==2&&!p.some(isNaN)).sort((a,b)=>a[0]-b[0]);
   if(c.length<2)return NaN;
-  if(fcj<=c[0][0])return c[0][1];
-  for(let i=1;i<c.length;i++){
-    if(fcj<=c[i][0]){
-      const [x0,y0]=c[i-1],[x1,y1]=c[i];
-      return y0+(y1-y0)*(fcj-x0)/(x1-x0);
-    }
-  }
-  return c[c.length-1][1];
+  return lerp(c.map(p=>p[0]),c.map(p=>p[1]),fcj);
 }
 
 function calcula(fck){
-  const sd=parseFloat($('cond').value);
-  const fcj=fck+1.65*sd;
-  const a=Math.round(ac(fcj)*100)/100;
-  const agua=v('agua');
-  const C=agua/a;
-  const Cb=v('vb')*v('dbc');
-  const p2=v('pb2')/100;
-  const Cb2=Cb*p2, Cb1=Cb*(1-p2);
-  const volA=1-(C/v('gc')+Cb/v('gb')+agua/1000);
-  const Ca=volA*v('ga');
-  const saco=v('saco');
-  const base=v('pa')*v('pb')/1000; // ℓ por cm de altura
-  const um=v('um')/100, inc=v('inc')/100;
-  const mats=[
-    {n:'Cimento',m:C,u:1},
-    {n:'Areia',m:Ca,u:Ca/C,d:v('da')},
-    {n:'Brita 1',m:Cb1,u:Cb1/C,d:v('db1')},
-    {n:'Brita 2',m:Cb2,u:Cb2/C,d:v('db2')}
-  ];
-  mats.forEach(x=>{
-    x.s=x.u*saco;
-    if(x.d){x.vol=x.s/x.d; x.vi=x.n==='Areia'?x.vol*(1+inc):x.vol; x.h=x.vi/base;}
+  const sd=v('sd'), fcj=fck+1.65*sd;
+  const a=Math.round(ac(fcj)*1000)/1000;
+  const agua=v('aguam')>0?v('aguam'):aguaTab(v('abat'),v('dmax'));
+  const vb=v('vbm')>0?v('vbm'):vbTab(v('mf'),v('dmax'));
+  const C=r0(agua/a), Cb=Math.floor(vb*v('dbc')+1e-9), p1=v('pb1')/100;
+  const b1=r0(Cb*p1), b2=r0(Cb*(1-p1));
+  const t=$('trunc').checked?t3:(x=>x);
+  const volA=1-(t(C/v('gc'))+t(Cb*p1/v('gb1')+Cb*(1-p1)/v('gb2'))+t(agua/v('gw')));
+  const Ca=r0(volA*v('ga'));
+  const saco=v('saco'), um=v('um')/100, inc=v('inc')/100, base=v('pa')*v('pb')/1000;
+  const rows=[{n:'Areia',m:Ca,d:v('da')},{n:'Brita 1',m:b1,d:v('db1')},{n:'Brita 2',m:b2,d:v('db2')}];
+  rows.forEach(x=>{
+    x.u=x.m/C; x.s=r0(x.u*saco); x.vol=r0(x.s/x.d*1000);
+    if(x.n==='Areia'){x.vum=r0(x.vol*(1+um)); x.vi=r0(x.vum*(1+inc));} else x.vi=x.vol;
+    x.np=Math.max(1,Math.ceil(x.vi/base/v('hmax')-1e-9)); x.h=r0(x.vi/(x.np*base));
   });
-  const aguaSaco=a*saco-mats[1].s*um;
-  return {fck,fcj,a,C,Ca,Cb1,Cb2,volA,mats,aguaSaco,base,sd};
+  const aguaS=r0(agua/C*saco), aguaC=r0(aguaS-rows[0].s*um);
+  return {fck,fcj,a,C,agua:r0(agua),vb,volA,rows,aguaS,aguaC,sd};
 }
 
 function render(){
-  const lista=$('fcks').value.split(',').map(Number).filter(x=>x>0);
-  const pa=v('pa'),pb=v('pb');
-  $('out').innerHTML=lista.map(fck=>{
-    const r=calcula(fck);
-    const ok=r.volA>0&&isFinite(r.a);
-    if(!ok)return `<div class="card"><h2>fck = ${fck} MPa</h2><p class="n">Dados inconsistentes (volume de areia negativo ou curva inválida).</p></div>`;
-    const m=r.mats;
-    const linhas=m.map((x,i)=>{
-      if(i===0)return `<tr><td>Cimento</td><td>${f(x.m,0)}</td><td>1,00</td><td>${f(v('saco'),0)}</td><td>${f(v('saco'),0)} kg</td><td>${f(v('saco'),0)} kg</td><td>1 saco</td></tr>`;
-      return `<tr><td>${x.n}</td><td>${f(x.m,0)}</td><td>${f(x.u)}</td><td>${f(x.s,1)}</td><td>${f(x.vol,1)}</td><td>${f(x.vi,1)}</td><td>1 × (${pa} × ${pb} × <b>${f(x.h,1)}</b>)</td></tr>`;
-    }).join('');
-    return `<div class="card"><h2>fck = ${fck} MPa</h2>
-<div class="w"><table><thead><tr><th>Materiais</th><th>1,0 m³ (kg)</th><th>Unit. (kg)</th><th>1 saco (kg)</th><th>Volume (ℓ)</th><th>Areia úm. ${f(um0(),0)}% / inch. ${f(v('inc'),0)}% (ℓ)</th><th>Padiolas (cm)</th></tr></thead><tbody>${linhas}</tbody></table></div>
-<p class="n"><b>fcj</b> = ${fck} + 1,65 × ${f(r.sd,1)} = <b>${f(r.fcj,1)} MPa</b> · <b>a/c</b> = ${f(r.a)} · água por saco (descontando umidade da areia): <b>${f(r.aguaSaco,1)} ℓ</b> · traço unitário (areia seca): 1 : ${f(m[1].u)} : ${f(m[2].u)} : ${f(m[3].u)} (brita 1 : brita 2 no final) · a/c ${f(r.a)}</p></div>`;
-  }).join('');
+  const fck=v('fck');
+  document.querySelectorAll('#chips button').forEach(b=>b.classList.toggle('on',+b.dataset.f===fck));
+  const r=calcula(fck), [A,B,Cb]=r.rows, pa=v('pa'), pb=v('pb'), sc=f(v('saco'));
+  if(!(r.volA>0)||!isFinite(r.a)||!(fck>0)){$('out').innerHTML='<p class="n">Dados inconsistentes (volume de areia negativo, fck inválido ou curva inválida).</p>';return;}
+  const lin=(x,l)=>`<tr><td>${x.n}</td><td>${f(x.m)}</td><td>${f(x.u,3)}</td><td>${f(x.s)}</td><td class="r">${f(x.vol)}<sup>(${l})</sup></td><td${x.n==='Areia'?' class="r"':''}>${f(x.vi)}${x.n==='Areia'?'<sup>(D)</sup>':''}</td><td>${x.np} x (${pa} x ${pb} x ${x.h})</td></tr>`;
+  const fr=n=>`<span class="fr"><span>${f(n)}</span><span>${f(r.C)}</span></span>`;
+  const ref=fck===25?`<p class="n">Slide da aula (fck 25): 421 · areia 710 · brita 1 858 · brita 2 214 · água 200 · 1,0 : 1,686 : 2,038 : 0,508 : 0,475. Altura da areia no slide: 24 cm (aqui, arredondado ao mais próximo: ${A.h}).</p>`:'';
+  const lim=$('cp').value==='40'?55:45;
+  const w=(r.fcj>lim?`<p class="warn">fcj de ${f(r.fcj,1)} MPa é alto para o CP ${$('cp').value} (a/c ${f(r.a,3)}). Confira o gráfico de Abrams do professor ou use cimento de maior resistência.</p>`:'')+(v('abat')>100&&!(v('aguam')>0)?'<p class="warn">Abatimento acima de 100 mm: a tabela ABCP de água não cobre, usei a faixa 80–100 mm.</p>':'');
+  $('out').innerHTML=`<h2>fck = ${fck} MPa · fcj = ${f(r.fcj,1)} MPa · a/c = ${f(r.a,3)}</h2>
+<div class="w"><table><thead><tr><th>Materiais</th><th>1,0 m³ (kg)</th><th>Unit. (kg)</th><th>1 saco (kg)</th><th>Volume (ℓ)</th><th>Areia Um. ${f(v('um'))}%<br>Inc. ${f(v('inc'))}%</th><th>Padiolas (cm)</th></tr></thead><tbody>
+<tr><td>Cimento</td><td>${f(r.C)}</td><td>1,0</td><td>${sc}</td><td>${sc} kg</td><td>${sc} kg</td><td>1 saco</td></tr>
+${lin(A,'A')}${lin(B,'B')}${lin(Cb,'C')}
+<tr><td>Água</td><td>${f(r.agua)}</td><td>${f(r.agua/r.C,3)}</td><td>${f(r.aguaS)}</td><td>${f(r.aguaS)}</td><td class="r">${f(r.aguaC)}<sup>(E)</sup></td><td>${f(r.aguaC)}ℓ</td></tr></tbody></table></div>
+<p class="n"><b>Dados ABCP usados:</b> água ${f(r.agua)} ℓ/m³ (abatimento ${f(v('abat'))} mm, Dmáx ${f(v('dmax'),1)} mm) · Vb = ${f(r.vb,3)} (MF ${f(v('mf'),2)}, Dmáx ${f(v('dmax'),1)} mm)</p>
+<p class="n"><b>(A, B, C)</b> kg do saco ÷ δ solta · <b>(D)</b> areia úmida: ${f(A.vol)} ℓ × ${f(1+v('um')/100,2)} = ${f(A.vum)} ℓ, × ${f(1+v('inc')/100,2)} (inchamento) = ${f(A.vi)} ℓ · <b>(E)</b> água do saco − umidade da areia: ${f(r.aguaS)} − ${f(A.s)} × ${f(v('um'))}% ≈ ${f(r.aguaC)} ℓ · altura = volume ÷ (nº de padiolas × ${f(pa*pb/1000,3)} ℓ/cm)</p>
+<p class="tr">1 : ${fr(A.m)} : ${fr(B.m)} : ${fr(Cb.m)} : ${fr(r.agua)}</p><br>
+<p class="tr"><b>1,0 : ${f(A.u,3)} : ${f(B.u,3)} : ${f(Cb.u,3)} : ${f(r.agua/r.C,3)}</b> &nbsp;<span class="n">(cim : areia : brita 1 : brita 2 : água/cim)</span></p>
+<p class="n"><b>C<sub>cim</sub></b> = ${f(r.C)} kg/m³</p>${w}${ref}`;
 }
-function um0(){return v('um');}
-$('calc').addEventListener('click',render);
-document.querySelectorAll('input,select').forEach(e=>e.addEventListener('change',render));
+document.querySelectorAll('#chips button').forEach(b=>b.addEventListener('click',()=>{$('fck').value=b.dataset.f;render();}));
+$('cp').addEventListener('change',()=>{$('curva').value=CURVAS[$('cp').value];render();});
+document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',render));
+$('curva').value=CURVAS[32];
 render();
 </script>
 </body>
