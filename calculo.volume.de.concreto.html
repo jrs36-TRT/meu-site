@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calculadora de Dosagem de Concreto — Traço 1:3,4:3,4</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+    body{max-width:900px;margin:28px auto;padding:20px;border-radius:12px;background:#f7f8fb;color:#0b1220}
+    h1{font-size:20px;margin:0 0 8px}
+    p.lead{margin:0 0 18px;color:#334155}
+    .card{background:#fff;padding:16px;border-radius:10px;box-shadow:0 6px 18px rgba(10,20,40,0.06);margin-bottom:14px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    label{display:block;font-size:13px;margin-bottom:6px;color:#0f1724}
+    input,select{width:100%;padding:8px;border-radius:8px;border:1px solid #d1d5db;font-size:14px}
+    button{background:#0ea5a4;border:none;color:white;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer}
+    button.secondary{background:#2563eb}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:8px;border-bottom:1px solid #eef2f7;text-align:left}
+    .muted{color:#6b7280;font-size:13px}
+    footer{margin-top:12px;font-size:13px;color:#475569}
+  </style>
+</head>
+<body>
+  <h1>Calculadora de Dosagem de Concreto — Traço 1:3,4:3,4</h1>
+  <p class="lead">Insira os dados (valores padrão correspondem ao seu exemplo). A calculadora mostra rendimento por saco, sacos por m³ e total para qualquer volume.</p>
+
+  <div class="card">
+    <div class="grid">
+      <div>
+        <label>fck (MPa)</label>
+        <input id="fck" type="number" value="15" />
+      </div>
+      <div>
+        <label>Traço (cimento:areia:brita)</label>
+        <input id="trace" type="text" value="1:3.4:3.4" />
+      </div>
+      <div>
+        <label>Massa por saco de cimento (kg)</label>
+        <input id="bagKg" type="number" value="40" />
+      </div>
+      <div>
+        <label>Relação água/cimento (w/c)</label>
+        <input id="wc" type="number" step="0.01" value="0.6" />
+      </div>
+      <div>
+        <label>Densidade do concreto fresco (kg/m³)</label>
+        <input id="density" type="number" value="2350" />
+      </div>
+      <div>
+        <label>Volume total desejado (m³)</label>
+        <input id="totalVol" type="number" step="0.01" value="10.10" />
+      </div>
+    </div>
+
+    <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
+      <button id="calcBtn">Calcular</button>
+      <div style="margin-left:auto" class="muted">AF_05/2021 — baseado em dados informados</div>
+    </div>
+  </div>
+
+  <div id="results" class="card" style="display:none">
+    <h3>Resultados</h3>
+    <div id="summary"></div>
+    <div id="perBag"></div>
+    <div id="perM3"></div>
+    <div id="total"></div>
+  </div>
+
+  <footer class="muted">Observação: cálculos aproximados para orientação de obra. Ajuste perdas (10–20%), umidade da areia e fator de empacotamento conforme necessidade.</footer>
+<a href="https://drive.google.com/file/d/13bMtkoJzEUIxSdE9pkGJJ5zpawLSVPCU/view"> Concretos Mpa</a>
+<script>
+  function parseTrace(str){
+    str = str.replace(/,/g,'.');
+    const parts = str.split(':').map(x=>parseFloat(x));
+    if(parts.length!==3 || parts.some(isNaN)) return null;
+    return parts;
+  }
+
+  function calc(){
+    const trace = parseTrace(document.getElementById('trace').value);
+    if(!trace){alert('Traço inválido. Use formato 1:3.4:3.4');return;}
+
+    const [pc,pa,pb]=trace;
+    const bagKg=parseFloat(document.getElementById('bagKg').value);
+    const wc=parseFloat(document.getElementById('wc').value);
+    const density=parseFloat(document.getElementById('density').value);
+    const totalVol=parseFloat(document.getElementById('totalVol').value);
+
+    const totalParts=pc+pa+pb;
+    const cementMass=bagKg;
+    const sandMass=pa*(cementMass/pc);
+    const rockMass=pb*(cementMass/pc);
+    const waterKg=wc*cementMass;
+    const totalWet=cementMass+sandMass+rockMass+waterKg;
+    const volPerBag=totalWet/density;
+    const bagsPerM3=1/volPerBag;
+
+    const cementPerM3=cementMass*bagsPerM3;
+    const sandPerM3=sandMass*bagsPerM3;
+    const rockPerM3=rockMass*bagsPerM3;
+    const waterPerM3=waterKg*bagsPerM3;
+
+    const totalBags=bagsPerM3*totalVol;
+    const cementTotal=cementPerM3*totalVol;
+    const sandTotal=sandPerM3*totalVol;
+    const rockTotal=rockPerM3*totalVol;
+    const waterTotal=waterPerM3*totalVol;
+
+    return {trace,totalParts,cementMass,sandMass,rockMass,waterKg,totalWet,volPerBag,bagsPerM3,cementPerM3,sandPerM3,rockPerM3,waterPerM3,totalVol,totalBags,cementTotal,sandTotal,rockTotal,waterTotal};
+  }
+
+  function fmt(n,dec=2){return Number.isFinite(n)?n.toFixed(dec).replace('.',','):'--';}
+
+  document.getElementById('calcBtn').addEventListener('click',()=>{
+    const r=calc();if(!r)return;
+    document.getElementById('results').style.display='block';
+
+    document.getElementById('summary').innerHTML=`<p><strong>Rendimento:</strong> ${fmt(r.volPerBag,3)} m³ por saco | <strong>Sacos por m³:</strong> ${fmt(r.bagsPerM3,2)}</p>`;
+    document.getElementById('perBag').innerHTML=`<h4>Por saco</h4><table><tr><th>Material</th><th>Kg</th></tr><tr><td>Cimento</td><td>${fmt(r.cementMass)}</td></tr><tr><td>Areia média</td><td>${fmt(r.sandMass)}</td></tr><tr><td>Seixo rolado</td><td>${fmt(r.rockMass)}</td></tr><tr><td>Água (L)</td><td>${fmt(r.waterKg)}</td></tr></table>`;
+    document.getElementById('perM3').innerHTML=`<h4>Por m³</h4><table><tr><th>Material</th><th>Kg</th></tr><tr><td>Cimento</td><td>${fmt(r.cementPerM3)}</td></tr><tr><td>Areia média</td><td>${fmt(r.sandPerM3)}</td></tr><tr><td>Seixo rolado</td><td>${fmt(r.rockPerM3)}</td></tr><tr><td>Água (L)</td><td>${fmt(r.waterPerM3)}</td></tr></table>`;
+    document.getElementById('total').innerHTML=`<h4>Total para ${fmt(r.totalVol)} m³</h4><table><tr><th>Material</th><th>Total</th></tr><tr><td>Cimento</td><td>${fmt(r.cementTotal)} kg (${fmt(r.totalBags)} sacos)</td></tr><tr><td>Areia média</td><td>${fmt(r.sandTotal)} kg</td></tr><tr><td>Seixo rolado</td><td>${fmt(r.rockTotal)} kg</td></tr><tr><td>Água (L)</td><td>${fmt(r.waterTotal)}</td></tr></table>`;
+  });
+</script>
+</body>
+</html>
