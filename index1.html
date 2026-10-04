@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Menu – José Robson da Silva</title>
+<style>
+:root{--bg:#f3f1ec;--card:#1f2a37;--card-t:#fff;--btn:#fff;--btn-t:#1f2a37;--bd:#d6d1c4;--ac:#e07a1f;--mut:#cbd5e1;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12171d;--card:#e9edf2;--card-t:#12171d;--btn:#1c2530;--btn-t:#e9edf2;--bd:#2c3846;--mut:#475569}}
+:root[data-theme="dark"]{--bg:#12171d;--card:#e9edf2;--card-t:#12171d;--btn:#1c2530;--btn-t:#e9edf2;--bd:#2c3846;--mut:#475569}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--btn-t);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px}
+.menu{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;width:100%;max-width:980px}
+.btn{background:var(--btn);color:var(--btn-t);border:1px solid var(--bd);border-radius:12px;padding:18px 8px;font-size:1rem;font-weight:600;cursor:pointer;transition:.18s;display:flex;flex-direction:column;align-items:center;gap:6px}
+.btn span{font-size:1.5rem}
+.btn:hover,.btn:focus-visible{transform:translateY(-3px);border-color:var(--ac);box-shadow:0 6px 16px rgba(0,0,0,.15);outline:none}
+.btn.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.center{grid-column:2/5;grid-row:2/5;background:var(--card);color:var(--card-t);border-radius:16px;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;min-height:240px}
+.center h1{margin:0;font-size:clamp(1.4rem,3vw,2rem)}
+.center p{margin:0;opacity:.85}
+.tag{background:var(--ac);color:#fff;border-radius:99px;padding:4px 14px;font-size:.85rem;font-weight:600}
+#status{margin-top:10px;font-size:.9rem;min-height:1.3em;opacity:.9}
+@media(max-width:700px){
+.menu{grid-template-columns:repeat(2,1fr)}
+.center{grid-column:1/-1;grid-row:auto;order:-1}
+}
+</style>
+</head>
+<body>
+<main class="menu" id="menu">
+<section class="center">
+  <h1>José Robson da Silva</h1>
+  <span class="tag">Técnico em Edificações · Unicorp</span>
+  <p>Estudante de Engenharia Civil · 5º período</p>
+  <p>Faculdade Católica Paulista</p>
+  <div id="status">Escolha uma opção do menu</div>
+</section>
+</main>
+<script>
+// Para abrir uma página/pasta, coloque o link em "link". Ex: link:"https://..."
+const itens=[
+{n:"Concreto",i:"🧱",link:""},{n:"Traço",i:"⚖️",link:""},{n:"Laje",i:"🏢",link:""},{n:"Pilar",i:"🏛️",link:""},{n:"Vigas",i:"📏",link:""},
+{n:"Fundações",i:"⛏️",link:""},{n:"Revit",i:"📐",link:""},
+{n:"Orçamento",i:"💰",link:""},{n:"Diagrama",i:"📊",link:""},
+{n:"TRTs",i:"📄",link:""},{n:"Fotos de obras",i:"📷",link:""},
+{n:"Planilhas Excel",i:"📗",link:""},{n:"Normas ABNT",i:"📚",link:""},{n:"Projetos",i:"🗂️",link:""},{n:"Elétrica",i:"⚡",link:""},{n:"Hidráulica",i:"🚰",link:""}
+];
+// posições na grade 5x5: topo(5), esquerda/direita (3 linhas), base(5)
+const pos=[[1,1],[1,2],[1,3],[1,4],[1,5],[2,1],[2,5],[3,1],[3,5],[4,1],[4,5],[5,1],[5,2],[5,3],[5,4],[5,5]];
+const menu=document.getElementById('menu'),st=document.getElementById('status');
+let atual=null;
+itens.forEach((it,k)=>{
+  const b=document.createElement('button');
+  b.className='btn';b.innerHTML='<span>'+it.i+'</span>'+it.n;
+  if(window.matchMedia('(min-width:701px)').matches){b.style.gridRow=pos[k][0];b.style.gridColumn=pos[k][1];}
+  b.onclick=()=>{
+    if(atual)atual.classList.remove('on');
+    b.classList.add('on');atual=b;
+    st.textContent='Seção selecionada: '+it.n;
+    if(it.link)window.open(it.link,'_blank','noopener');
+  };
+  menu.appendChild(b);
+});
+</script>
+</body>
+</html>
