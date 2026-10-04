@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calculadora de Pilar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E9E7E2; --card:#F7F6F3; --ink:#1B2230; --muted:#5B6372; --line:#C9C6BE;
+  --accent:#1F4FD8; --accent-ink:#fff; --ok:#1F7A4D; --warn:#A8461B; --draw:#CFCBC1;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#14181F;--card:#1D232D;--ink:#E8EAEE;--muted:#9AA3B2;--line:#343C49;--accent:#6E96FF;--accent-ink:#0E1420;--ok:#59C58D;--warn:#F08A5D;--draw:#3A4352}
+}
+:root[data-theme="dark"]{--bg:#14181F;--card:#1D232D;--ink:#E8EAEE;--muted:#9AA3B2;--line:#343C49;--accent:#6E96FF;--accent-ink:#0E1420;--ok:#59C58D;--warn:#F08A5D;--draw:#3A4352}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:16px/1.5 Archivo,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+main{max-width:1040px;margin:0 auto;padding:24px 18px 48px}
+h1{font-size:clamp(26px,5vw,38px);font-weight:800;letter-spacing:-.02em;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 24px;max-width:60ch}
+.grid{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:860px){.grid{grid-template-columns:360px 1fr;align-items:start}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+h2{font-size:18px;margin:0 0 12px;font-weight:600}
+fieldset{border:0;padding:0;margin:0 0 14px}
+legend{font-weight:600;font-size:14px;padding:0;margin-bottom:6px}
+label{display:block;font-size:14px;color:var(--muted);margin-bottom:10px}
+input,select{width:100%;margin-top:4px;padding:10px 12px;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg{display:flex;gap:6px;margin-bottom:12px}
+.seg button{flex:1;padding:9px 6px;font:inherit;font-size:14px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.hero{display:grid;gap:16px;grid-template-columns:1fr;align-items:center}
+@media(min-width:560px){.hero{grid-template-columns:240px 1fr}}
+.size{font-size:clamp(34px,7vw,52px);font-weight:800;letter-spacing:-.03em;line-height:1.05}
+.area{color:var(--muted);margin-top:4px}
+.badge{display:inline-block;margin-top:10px;padding:4px 10px;border-radius:999px;font-size:13px;font-weight:600;border:1px solid currentColor}
+.ok{color:var(--ok)}.warn{color:var(--warn)}
+svg{width:100%;height:auto;display:block}
+.steps{margin-top:18px;display:grid;gap:10px}
+.step{border-top:1px solid var(--line);padding-top:10px}
+.step b{display:block;font-weight:600}
+.step p{margin:2px 0;color:var(--muted);font-size:15px}
+.step .f{color:var(--ink);font-variant-numeric:tabular-nums}
+.notes{margin:16px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+.err{color:var(--warn);font-weight:600}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+#tema{padding:8px 12px;font:inherit;font-size:13px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:6px;cursor:pointer}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <div>
+      <h1>Calculadora de pilar</h1>
+      <p class="sub">Pré-dimensionamento pelo método passo a passo: menor lado pelo pé direito, carga das vigas e laje, e resistência do concreto (NBR 6118).</p>
+    </div>
+    <button id="tema" type="button" aria-label="Alternar tema claro e escuro">Tema</button>
+  </div>
+
+  <div class="grid">
+    <section class="card" aria-label="Dados do pilar">
+      <h2>Dados do pilar</h2>
+      <label>Tipo de pilar
+        <select id="tipo">
+          <option value="2">Canto (2 cargas)</option>
+          <option value="3">Extremidade (3 cargas)</option>
+          <option value="4">Intermediário (4 cargas)</option>
+        </select>
+      </label>
+      <fieldset>
+        <legend>Carga no pilar</legend>
+        <div class="seg" role="group" aria-label="Forma de informar a carga">
+          <button type="button" id="mLaje" aria-pressed="true">Laje + vigas</button>
+          <button type="button" id="mDireta" aria-pressed="false">Valor direto</button>
+        </div>
+        <div id="boxLaje" class="row">
+          <label>Carga da laje (Lg, kN)<input id="lg" type="number" step="any" min="0" value="63.75" inputmode="decimal"></label>
+          <label>Carga das vigas (Vg, kN)<input id="vg" type="number" step="any" min="0" value="5.74" inputmode="decimal"></label>
+        </div>
+        <div id="boxDireta" hidden>
+          <label>Carga total P (kN)<input id="pd" type="number" step="any" min="0" value="69.49" inputmode="decimal"></label>
+        </div>
+      </fieldset>
+      <div class="row">
+        <label>Concreto fck (MPa)<input id="fck" type="number" step="any" min="1" value="25" inputmode="decimal"></label>
+        <label>Coef. segurança (γc)<input id="gc" type="number" step="any" min="1" value="1.4" inputmode="decimal"></label>
+      </div>
+      <div class="row">
+        <label>Pé direito (m)<input id="pe" type="number" step="any" min="0.1" value="4" inputmode="decimal"></label>
+        <label>Cobrimento (cm)<input id="cob" type="number" step="any" min="0" value="3" inputmode="decimal"></label>
+      </div>
+    </section>
+
+    <section class="card" aria-live="polite" aria-label="Resultado">
+      <div id="erro" class="err" hidden></div>
+      <div id="saida">
+        <div class="hero">
+          <svg id="desenho" viewBox="0 0 240 190" role="img" aria-label="Seção do pilar desenhada em escala"></svg>
+          <div>
+            <div class="size" id="tam"></div>
+            <div class="area" id="area"></div>
+            <span class="badge" id="badge"></span>
+          </div>
+        </div>
+        <div class="steps" id="passos"></div>
+        <ul class="notes" id="notas"></ul>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+(function(){
+  var $ = function(id){return document.getElementById(id)};
+  var modo = 'laje';
+  var AREA_MIN = 364;          // 14 x 26 cm (NBR 6118)
+  var fmt = function(n,d){return Number(n).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:d==null?2:d})};
+  var num = function(id){return parseFloat($(id).value)};
+
+  function setModo(m){
+    modo = m;
+    $('mLaje').setAttribute('aria-pressed', m==='laje');
+    $('mDireta').setAttribute('aria-pressed', m==='direta');
+    $('boxLaje').hidden = m!=='laje';
+    $('boxDireta').hidden = m!=='direta';
+    calcular();
+  }
+
+  function desenhar(b, D){
+    var s = Math.min(190/D, 130/b);
+    var w = D*s, h = b*s, x = (240-w)/2, y = 30 + (130-h)/2;
+    var cor = 'currentColor';
+    $('desenho').innerHTML =
+      '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="var(--draw)" stroke="var(--ink)" stroke-width="2"/>' +
+      '<line x1="'+x+'" y1="'+(y-12)+'" x2="'+(x+w)+'" y2="'+(y-12)+'" stroke="var(--muted)"/>' +
+      '<line x1="'+(x-12)+'" y1="'+y+'" x2="'+(x-12)+'" y2="'+(y+h)+'" stroke="var(--muted)"/>' +
+      '<text x="'+(x+w/2)+'" y="'+(y-18)+'" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)">'+fmt(D)+' cm</text>' +
+      '<text x="'+(x-18)+'" y="'+(y+h/2)+'" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)" transform="rotate(-90 '+(x-18)+' '+(y+h/2)+')">'+fmt(b)+' cm</text>';
+  }
+
+  function calcular(){
+    var fck=num('fck'), gc=num('gc'), pe=num('pe'), cob=num('cob'), tipo=parseInt($('tipo').value,10);
+    var P;
+    if(modo==='laje'){ var lg=num('lg'), vg=num('vg'); P = (lg*tipo + vg*tipo)/2; }
+    else { P = num('pd'); }
+    var ok = [fck,gc,pe,P].every(function(v){return isFinite(v) && v>0});
+    $('erro').hidden = ok; $('saida').hidden = !ok;
+    if(!ok){ $('erro').textContent = 'Preencha carga, fck, γc e pé direito com valores maiores que zero.'; return; }
+
+    // Passo 2: menor lado
+    var bBruto = pe*100/25;
+    var b = Math.max(14, Math.ceil(bBruto - 1e-9));
+    // Passo 4: resistência de cálculo
+    var fcdMPa = fck/gc, fcd = fcdMPa*10;      // kgf/cm²
+    // Passo 3/5: carga e área
+    var Pkgf = P*100;
+    var Acalc = Pkgf/fcd;
+    var Dcalc = Acalc/b;
+    var areaMin = b<19 ? AREA_MIN : 361;
+    var Dmin = areaMin/b;
+    var Dreq = Math.max(Dcalc, Dmin, b);
+    var D = Math.ceil(Dreq/5 - 1e-9)*5;
+    var area = b*D;
+    var governa = Dcalc >= Dmin ? 'a carga' : 'a área mínima da norma';
+
+    $('tam').textContent = fmt(b)+' × '+fmt(D)+' cm';
+    $('area').textContent = 'Área = '+fmt(area)+' cm²';
+    var okArea = area >= areaMin;
+    $('badge').textContent = okArea ? 'Atende a área mínima ('+fmt(areaMin)+' cm²)' : 'Abaixo da área mínima';
+    $('badge').className = 'badge ' + (okArea?'ok':'warn');
+    desenhar(b, D);
+
+    var p = [];
+    p.push(['Dimensões mínimas (NBR 6118)', 'Mínimo de 19 × 19 cm. Aceita-se lado de 14 cm se a área for de pelo menos '+AREA_MIN+' cm² (14 × 26 = 364 cm²).']);
+    p.push(['Menor lado (b)', 'b = pé direito / 25 = '+fmt(pe)+' m / 25 = '+fmt(bBruto)+' cm → adotado b = '+fmt(b)+' cm.'+(bBruto<14?' (O mínimo absoluto é 14 cm.)':'')]);
+    p.push(['Carga no pilar (P)', modo==='laje'
+      ? 'P = ((Lg × '+tipo+') + (Vg × '+tipo+')) / 2 = (('+fmt(num('lg'))+' × '+tipo+') + ('+fmt(num('vg'))+' × '+tipo+')) / 2 = '+fmt(P)+' kN'
+      : 'P = '+fmt(P)+' kN (informada diretamente)']);
+    p.push(['Resistência de cálculo do concreto', 'fcd = fck / γc = '+fmt(fck)+' / '+fmt(gc)+' = '+fmt(fcdMPa)+' MPa = '+fmt(fcd)+' kgf/cm²']);
+    p.push(['Maior dimensão (D)', 'P = '+fmt(P)+' kN × 100 = '+fmt(Pkgf)+' kgf. D = (P / fcd) / b = ('+fmt(Pkgf)+' / '+fmt(fcd)+') / '+fmt(b)+' = '+fmt(Dcalc)+' cm. Pela área mínima: '+fmt(areaMin)+' / '+fmt(b)+' = '+fmt(Dmin)+' cm. Define '+governa+' → arredondado para '+fmt(D)+' cm.']);
+    $('passos').innerHTML = p.map(function(s,i){
+      return '<div class="step"><b>'+(i+1)+'. '+s[0]+'</b><p class="f">'+s[1]+'</p></div>';
+    }).join('');
+
+    var n = ['Detalhamento: carga de '+fmt(P)+' kN, pilar '+fmt(b)+' × '+fmt(D)+' cm, altura de '+fmt(pe)+' m, cobrimento de '+fmt(cob)+' cm, concreto de '+fmt(fck)+' MPa.',
+             'Arredondamento da maior dimensão para múltiplos de 5 cm, como no exemplo da aula.'];
+    if(b<19) n.push('Com lado menor que 19 cm, a NBR 6118 pede majoração dos esforços (coeficiente γn).');
+    n.push('Pré-dimensionamento: considera só o concreto. Armadura, flexão e esbeltez entram no projeto completo.');
+    $('notas').innerHTML = n.map(function(t){return '<li>'+t+'</li>'}).join('');
+  }
+
+  ['tipo','lg','vg','pd','fck','gc','pe','cob'].forEach(function(id){ $(id).addEventListener('input', calcular); });
+  $('mLaje').addEventListener('click', function(){setModo('laje')});
+  $('mDireta').addEventListener('click', function(){setModo('direta')});
+  $('tema').addEventListener('click', function(){
+    var r = document.documentElement, dark = r.getAttribute('data-theme')==='dark' ||
+      (!r.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+    r.setAttribute('data-theme', dark ? 'light' : 'dark');
+  });
+  calcular();
+})();
+</script>
+</body>
+</html>
