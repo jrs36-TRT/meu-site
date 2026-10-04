@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calculadora de Laje</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E9E7E2;--card:#F7F6F3;--ink:#1B2230;--muted:#5B6372;--line:#C9C6BE;--accent:#1F4FD8;--accent-ink:#fff;--ok:#1F7A4D;--warn:#A8461B;--draw:#DAD7CE;--y:#C26A12;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14181F;--card:#1D232D;--ink:#E8EAEE;--muted:#9AA3B2;--line:#343C49;--accent:#6E96FF;--accent-ink:#0E1420;--ok:#59C58D;--warn:#F08A5D;--draw:#2C3441;--y:#F0A04B}}
+:root[data-theme="dark"]{--bg:#14181F;--card:#1D232D;--ink:#E8EAEE;--muted:#9AA3B2;--line:#343C49;--accent:#6E96FF;--accent-ink:#0E1420;--ok:#59C58D;--warn:#F08A5D;--draw:#2C3441;--y:#F0A04B}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:16px/1.5 Archivo,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+main{max-width:1080px;margin:0 auto;padding:24px 18px 48px}
+h1{font-size:clamp(26px,5vw,38px);font-weight:800;letter-spacing:-.02em;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 24px;max-width:62ch}
+.grid{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:900px){.grid{grid-template-columns:380px 1fr;align-items:start}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+h2{font-size:18px;margin:0 0 12px;font-weight:600}
+h3{font-size:15px;margin:16px 0 8px;font-weight:600}
+label{display:block;font-size:14px;color:var(--muted);margin-bottom:10px}
+input,select{width:100%;margin-top:4px;padding:10px 12px;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px}
+input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+details{margin-top:6px}summary{cursor:pointer;font-weight:600;font-size:14px;padding:6px 0}
+.hero{display:grid;gap:16px;grid-template-columns:1fr;align-items:center}
+@media(min-width:600px){.hero{grid-template-columns:260px 1fr}}
+.size{font-size:clamp(28px,6vw,44px);font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.sm{color:var(--muted);margin-top:4px}
+.badge{display:inline-block;margin-top:10px;padding:4px 10px;border-radius:999px;font-size:13px;font-weight:600;border:1px solid currentColor}
+.ok{color:var(--ok)}.warn{color:var(--warn)}
+svg{width:100%;height:auto;display:block}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:16px}
+.tile{border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.tile span{display:block;font-size:12px;color:var(--muted)}
+.tile b{font-size:17px;font-variant-numeric:tabular-nums}
+.step{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+.step b{display:block;font-weight:600}
+.step p{margin:2px 0;color:var(--muted);font-size:15px;font-variant-numeric:tabular-nums}
+.alerts{margin:0 0 12px;padding-left:18px;color:var(--warn);font-weight:600;font-size:14px}
+.notes{margin:16px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+.err{color:var(--warn);font-weight:600}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+#tema{padding:8px 12px;font:inherit;font-size:13px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:6px;cursor:pointer}
+.leg{font-size:13px;color:var(--muted);margin-top:4px}
+.rodape{
+  max-width:1040px;
+  margin:0 auto;
+  padding:20px 18px 32px;
+  border-top:1px solid var(--line);
+  text-align:center;
+}
+.btn-pdf{
+  display:inline-block;
+  padding:10px 18px;
+  font-weight:600;
+  color:var(--accent-ink);
+  background:var(--accent);
+  border-radius:6px;
+  text-decoration:none;
+}
+.btn-pdf:hover{opacity:.9}
+.btn-pdf:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <div>
+      <h1>Calculadora de laje</h1>
+      <p class="sub">Laje maciça armada em duas direções, apoiada nos quatro lados, pelo método de Marcus. Do cálculo das cargas até a bitola e o espaçamento das barras.</p>
+    </div>
+    <button id="tema" type="button" aria-label="Alternar tema claro e escuro">Tema</button>
+  </div>
+
+  <div class="grid">
+    <section class="card" aria-label="Dados da laje">
+      <h2>Dados da laje</h2>
+      <div class="row">
+        <label>Vão lx (m)<input id="lx" type="number" step="any" min="0.1" value="3.3" inputmode="decimal"></label>
+        <label>Vão ly (m)<input id="ly" type="number" step="any" min="0.1" value="3.3" inputmode="decimal"></label>
+      </div>
+      <div class="row">
+        <label>Altura h (cm)<input id="h" type="number" step="any" min="5" value="13" inputmode="decimal"></label>
+        <label>Cobrimento (cm)<input id="cob" type="number" step="any" min="0" value="2.5" inputmode="decimal"></label>
+      </div>
+      <div class="row">
+        <label>Concreto fck (MPa)<input id="fck" type="number" step="any" min="1" value="30" inputmode="decimal"></label>
+        <label>Barra (Ø mm)
+          <select id="phi"><option>6.3</option><option>8</option><option selected>10</option><option>12.5</option><option>16</option></select>
+        </label>
+      </div>
+
+      <h3>Cargas (kN/m²)</h3>
+      <div class="row">
+        <label>Equipamento (kN)<input id="peq" type="number" step="any" min="0" value="150" inputmode="decimal"></label>
+        <label>Área de apoio (m²)<input id="aeq" type="number" step="any" min="0" value="5.6" inputmode="decimal"></label>
+      </div>
+      <div class="row">
+        <label>Variável (kN/m²)<input id="qvar" type="number" step="any" min="0" value="1" inputmode="decimal"></label>
+        <label>Outras permanentes (kN/m²)<input id="outras" type="number" step="any" min="0" value="0" inputmode="decimal"></label>
+      </div>
+      <div class="row">
+        <label>Contrapiso (cm)<input id="tcp" type="number" step="any" min="0" value="3" inputmode="decimal"></label>
+        <label>Peso do contrapiso (kN/m³)<input id="gcp" type="number" step="any" min="0" value="21" inputmode="decimal"></label>
+      </div>
+      <label>Majoração das cargas (γf)<input id="gf" type="number" step="any" min="1" value="1.4" inputmode="decimal"></label>
+
+      <details>
+        <summary>Ajustes do método</summary>
+        <div class="row">
+          <label>Taxa mínima (%)<input id="rho" type="number" step="any" min="0" value="0.15" inputmode="decimal"></label>
+          <label>Divisor do aço (kgf/cm²)<input id="kaco" type="number" step="any" min="1" value="2500" inputmode="decimal"></label>
+        </div>
+        <label>Coeficientes de Marcus
+          <select id="modo"><option value="auto">Calcular pela fórmula</option><option value="manual">Informar da tabela</option></select>
+        </label>
+        <div class="row" id="manual" hidden>
+          <label>kx<input id="kxm" type="number" step="any" value="0.5" inputmode="decimal"></label>
+          <label>mx<input id="mxm" type="number" step="any" value="27.43" inputmode="decimal"></label>
+          <label>my<input id="mym" type="number" step="any" value="27.43" inputmode="decimal"></label>
+        </div>
+      </details>
+    </section>
+
+    <section class="card" aria-live="polite" aria-label="Resultado">
+      <div id="erro" class="err" hidden></div>
+      <div id="saida">
+        <ul class="alerts" id="alertas"></ul>
+        <div class="hero">
+          <div>
+            <svg id="planta" viewBox="0 0 260 220" role="img" aria-label="Planta da laje com as barras em escala"></svg>
+            <div class="leg">Azul: barras em x (paralelas a lx). Laranja: barras em y.</div>
+          </div>
+          <div>
+            <div class="size" id="titulo"></div>
+            <div class="sm" id="sub2"></div>
+            <span class="badge" id="badge"></span>
+          </div>
+        </div>
+        <div class="tiles" id="tiles"></div>
+        <div id="passos"></div>
+        <ul class="notes" id="notas"></ul>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="rodape">
+  <a class="btn-pdf" href="laje_caixa_dagua_slides.pdf" download target="_blank" rel="noopener">
+    Baixar PDF explicativo
+  </a>
+</footer>
+
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var num=function(i){return parseFloat($(i).value)};
+  var fmt=function(n,d){return Number(n).toLocaleString('pt-BR',{maximumFractionDigits:d==null?2:d})};
+
+  function planta(lx,ly,sx,sy,showY){
+    var sc=Math.min(230/ly,170/lx), w=ly*sc, h=lx*sc, x0=(260-w)/2, y0=30+(170-h)/2, o='';
+    o+='<rect x="'+x0+'" y="'+y0+'" width="'+w+'" height="'+h+'" fill="var(--draw)" stroke="var(--ink)" stroke-width="2"/>';
+    var stepY=Math.max(sy/100*sc,3), stepX=Math.max(sx/100*sc,3);
+    for(var p=stepY/2;p<w;p+=stepY) o+='<line x1="'+(x0+p)+'" y1="'+(y0+4)+'" x2="'+(x0+p)+'" y2="'+(y0+h-4)+'" stroke="var(--accent)" stroke-width="0.8"/>';
+    if(showY) for(var q=stepX/2;q<h;q+=stepX) o+='<line x1="'+(x0+4)+'" y1="'+(y0+q)+'" x2="'+(x0+w-4)+'" y2="'+(y0+q)+'" stroke="var(--y)" stroke-width="0.8"/>';
+    o+='<text x="'+(x0+w/2)+'" y="'+(y0-8)+'" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)">ly = '+fmt(ly)+' m</text>';
+    o+='<text x="'+(x0-8)+'" y="'+(y0+h/2)+'" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)" transform="rotate(-90 '+(x0-8)+' '+(y0+h/2)+')">lx = '+fmt(lx)+' m</text>';
+    $('planta').innerHTML=o;
+  }
+
+  function calcular(){
+    $('manual').hidden=$('modo').value!=='manual';
+    var ids=['lx','ly','h','cob','fck','phi','qvar','outras','tcp','gcp','gf','rho','kaco'];
+    var v={}; ids.forEach(function(i){v[i]=num(i)});
+    var peq=num('peq')||0, aeq=num('aeq')||0;
+    var ok=ids.every(function(i){return isFinite(v[i])}) && v.lx>0 && v.ly>0 && v.h>0 && v.fck>0 && v.gf>=1 && v.kaco>0;
+    $('erro').hidden=ok; $('saida').hidden=!ok;
+    if(!ok){$('erro').textContent='Preencha vãos, altura, fck, γf e divisor do aço com valores válidos.';return;}
+
+    var lx=Math.min(v.lx,v.ly), ly=Math.max(v.lx,v.ly), lam=ly/lx, duas=lam<=2, h=v.h;
+    var qeq=aeq>0?peq/aeq:0, pp=h/100*25, cp=v.tcp/100*v.gcp;
+    var g=qeq+v.qvar+cp+pp+v.outras, qd=g*v.gf, qk=qd*100;
+    var kx,mx,my;
+    if($('modo').value==='manual'){kx=num('kxm');mx=num('mxm');my=num('mym');}
+    else{var l4=Math.pow(lam,4);kx=l4/(1+l4);var ky=1-kx;mx=8/(kx*(1-5*kx/6));my=8/(ky*lam*lam*(1-5*ky/6));}
+    var qx=qk*kx;
+    var Mxm,Mym;
+    if(duas){Mxm=qx*lx*lx/mx;Mym=qx*lx*lx/my;} else {Mxm=qx*lx*lx/8;Mym=0;}
+    var Mx=Mxm*100, My=Mym*100;                           // kgf.cm/m
+    var phi=v.phi, d=h-v.cob-phi/20;
+    var al=[];
+    if(!(d>0)){$('erro').hidden=false;$('saida').hidden=true;$('erro').textContent='A altura útil ficou zero ou negativa: aumente h ou reduza o cobrimento.';return;}
+    var C=Mx/(100*d*d), Clim=0.14*v.fck*10;
+    if(C>Clim) al.push('C = '+fmt(C,1)+' kgf/cm² passou do limite de '+fmt(Clim,0)+': aumente h ou fck.');
+    var Asmin=v.rho/100*100*h;
+    var Asx=Math.max(Mx/(v.kaco*d),Asmin), Asy=duas?Math.max(My/(v.kaco*d),Asmin):Math.max(Asmin,0.2*Asx);
+    var Ab=Math.PI*Math.pow(phi/10,2)/4, smax=Math.min(20,2*h);
+    var sx=Math.floor(Math.min(Ab/Asx*100,smax)/2.5)*2.5, sy=Math.floor(Math.min(Ab/Asy*100,smax)/2.5)*2.5;
+    if(sx<5||sy<5){al.push('Espaçamento menor que 5 cm: use uma barra de diâmetro maior.');sx=Math.max(sx,2.5);sy=Math.max(sy,2.5);}
+    if(phi>h*10/8) al.push('Barra maior que h/8 ('+fmt(h*10/8,1)+' mm): a NBR 6118 limita o diâmetro.');
+    if(!duas) al.push('ly/lx = '+fmt(lam)+' passa de 2: laje armada em uma direção (cálculo em x, distribuição em y).');
+    var Asxe=Ab*100/sx, Asye=Ab*100/sy, ph=fmt(phi,1);
+
+    $('alertas').innerHTML=al.map(function(t){return '<li>'+t+'</li>'}).join('');
+    $('titulo').textContent='Ø'+ph+' c/'+fmt(sx,1)+' (x)  e  Ø'+ph+' c/'+fmt(sy,1)+' (y)';
+    $('sub2').textContent='Laje '+fmt(lx)+' × '+fmt(ly)+' m, h = '+fmt(h,0)+' cm, '+(duas?'armada em duas direções':'armada em uma direção');
+    var seg=C<=Clim;
+    $('badge').textContent=seg?'Seção de concreto OK (C ≤ limite)':'Seção de concreto insuficiente';
+    $('badge').className='badge '+(seg?'ok':'warn');
+    planta(lx,ly,sx,sy,true);
+
+    var tl=[['Carga de cálculo',fmt(qd)+' kN/m²'],['Mx',fmt(Mxm,0)+' kgf·m/m'],['My',fmt(Mym,0)+' kgf·m/m'],['As x',fmt(Asx)+' cm²/m'],['As y',fmt(Asy)+' cm²/m'],['d',fmt(d,1)+' cm']];
+    $('tiles').innerHTML=tl.map(function(t){return '<div class="tile"><span>'+t[0]+'</span><b>'+t[1]+'</b></div>'}).join('');
+
+    var p=[
+     ['Cargas (NBR 6120)','Equipamento: '+fmt(peq)+' / '+fmt(aeq)+' = '+fmt(qeq)+' kN/m². Variável: '+fmt(v.qvar)+'. Contrapiso: '+fmt(v.tcp,1)+' cm × '+fmt(v.gcp)+' = '+fmt(cp)+'. Peso da laje: '+fmt(h/100,2)+' × 25 = '+fmt(pp)+'. Outras: '+fmt(v.outras)+'.'],
+     ['Carga de cálculo','q característica = '+fmt(g)+' kN/m². q de cálculo = '+fmt(g)+' × '+fmt(v.gf)+' = '+fmt(qd)+' kN/m² = '+fmt(qk,0)+' kgf/m².'],
+     ['Tipo de armação','ly/lx = '+fmt(ly)+' / '+fmt(lx)+' = '+fmt(lam)+' → '+(duas?'menor ou igual a 2: duas direções.':'maior que 2: uma direção.')],
+     ['Coeficientes de Marcus', duas?('kx = '+fmt(kx,3)+'  mx = '+fmt(mx)+'  my = '+fmt(my)+'. qx = q × kx = '+fmt(qx,0)+' kgf/m² (parcela da carga em x).'):'Não se aplica: laje em uma direção, M = q·lx²/8.'],
+     ['Momentos', duas?('Mx = (q × lx²) / mx = ('+fmt(qk,0)+' × '+fmt(lx)+'²) / '+fmt(mx)+' = '+fmt(Mxm,0)+' kgf·m/m = '+fmt(Mx,0)+' kgf·cm/m. My = (q × lx²) / my = '+fmt(Mym,0)+' kgf·m/m = '+fmt(My,0)+' kgf·cm/m.'):('M = ('+fmt(qk,0)+' × '+fmt(lx)+'²) / 8 = '+fmt(Mxm,0)+' kgf·m/m = '+fmt(Mx,0)+' kgf·cm/m.')],
+     ['Altura útil e verificação','d = h − c − Ø/2 = '+fmt(h,1)+' − '+fmt(v.cob,1)+' − '+fmt(phi/20,2)+' = '+fmt(d,1)+' cm. C = M / (b·d²) = '+fmt(Mx,0)+' / (100 × '+fmt(d,1)+'²) = '+fmt(C,1)+' kgf/cm². Limite = 0,14 × '+fmt(v.fck*10,0)+' = '+fmt(Clim,0)+' kgf/cm².'],
+     ['Armadura','As mín = '+fmt(v.rho,2)+'% × 100 × '+fmt(h,0)+' = '+fmt(Asmin)+' cm²/m. As x = Mx / ('+fmt(v.kaco,0)+' × d) = '+fmt(Mx/(v.kaco*d))+' cm²/m. As y = '+(duas?'My / ('+fmt(v.kaco,0)+' × d) = '+fmt(My/(v.kaco*d))+' cm²/m':'distribuição: maior entre a mínima e 20% de As x')+'. Vale o maior entre o calculado e o mínimo: x = '+fmt(Asx)+', y = '+fmt(Asy)+' cm²/m.'],
+     ['Espaçamento','Ø'+ph+' mm: '+fmt(Ab,3)+' cm² por barra. Espaçamento = Ab / As × 100, máximo '+fmt(smax,0)+' cm, arredondado para baixo em múltiplos de 2,5 cm: x = '+fmt(sx,1)+' cm (As = '+fmt(Asxe)+' cm²/m), y = '+fmt(sy,1)+' cm (As = '+fmt(Asye)+' cm²/m).']
+    ];
+    $('passos').innerHTML=p.map(function(s,i){return '<div class="step"><b>'+(i+1)+'. '+s[0]+'</b><p>'+s[1]+'</p></div>'}).join('');
+    $('notas').innerHTML=[
+      'Momentos pela fórmula de Marcus para laje apoiada nos quatro lados: Mx = q·lx²/mx, com a carga total q e os coeficientes mx e my da tabela. A opção "Informar da tabela" aceita os valores do seu professor.',
+      'A camada de barras de y fica por cima da de x, com d menor (cerca de Ø a menos). Aqui usei o mesmo d nas duas direções, como no método da aula.',
+      'Pré-dimensionamento. Flecha, cisalhamento, punção sob carga concentrada e armadura de canto não estão incluídos.'
+    ].map(function(t){return '<li>'+t+'</li>'}).join('');
+  }
+
+  document.querySelectorAll('input,select').forEach(function(e){e.addEventListener('input',calcular)});
+  $('tema').addEventListener('click',function(){
+    var r=document.documentElement,dark=r.getAttribute('data-theme')==='dark'||(!r.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
+    r.setAttribute('data-theme',dark?'light':'dark');
+  });
+  calcular();
+})();
+</script>
+</body>
+</html>
