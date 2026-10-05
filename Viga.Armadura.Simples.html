@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Armadura Simples Viga</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h2 {
+      text-align: center;
+      color: #e67e22;
+      margin-bottom: 20px;
+    }
+    h3 {
+      margin-top: 40px;
+      color: #2c3e50;
+    }
+    form {
+      max-width: 600px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background: #e67e22;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #d35400;
+    }
+    #resultado {
+      max-width: 800px;
+      margin: 20px auto;
+      background: #fff3e6;
+      padding: 20px;
+      border-left: 6px solid #e67e22;
+      border-radius: 8px;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+    .autor {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 14px;
+      color: #555;
+    }
+    .referencia a {
+      color: #e67e22;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  
+
+  
+
+  <h2>Dimensionamento de Armadura Simples da Viga</h2>
+  <form>
+    <label for="a1">Seção do Pilar b: cm</label>
+    <input type="number" id="a1" value="25"><br><br>
+    <label for="b1">Seção do Pilar h: cm</label>
+    <input type="number" id="b1" value="40"><br><br>
+    <label for="c1">Carga Sobre a Viga (kN)</label>
+    <input type="number" id="c1" value="47.57"><br><br>
+    <label for="d1">Comprimento da Viga (M)</label>
+    <input type="number" id="d1" value="3.7"><br><br>
+    <label for="fck">Fck do Concreto (ex: C30 = 2.5)</label>
+    <input type="number" id="fck" value="2.5"><br><br>
+   
+    
+
+   
+    
+    <button type="button" onclick="calcular1()">Calcular</button>
+  </form>
+  <p id="resultado"></p>
+  
+  <br><br>
+   <div class="autor">
+    <h3>Desenvolvedor</h3>
+    Jose Robson da Silva<br>
+    Técnico em Edificações<br>
+    Estudante de Engenharia Civil<br>
+    INST: @joserobson20
+
+</body>
+</html>
+<script>
+
+function calcular1() {
+    const a1 = parseFloat(document.getElementById("a1").value);
+    const b1 = parseFloat(document.getElementById("b1").value);
+    const c1 = parseFloat(document.getElementById("c1").value);
+    const d1 = parseFloat(document.getElementById("d1").value);
+    const fck = parseFloat(document.getElementById("fck").value);
+   
+
+    const EsfAdmisivel= (c1 * Math.pow(d1, 2)) / 8;
+    const kgf = EsfAdmisivel*100;
+    const abacu = 0.40;
+    const As = abacu*(a1*b1)*(3.0/1.4)/(50/1.15);
+
+    const raio = 1;
+    const barras = (Math.PI * Math.pow(raio, 2)) / 4;
+    const raio16 = 1.6;
+    const barras16 = (Math.PI * Math.pow(raio16, 2)) / 4;
+    const raio20 = 2;
+    const barras20 = (Math.PI * Math.pow(raio20, 2)) / 4;
+    const Qbarras = As/barras;
+
+
+    const EsfAdmisivelX= kgf*1.4 ;
+    
+
+    const d = b1 - (2.5+1);
+
+    // Bascara
+    const mascara1 = fck/1.4;
+    const mascara2 = 0.68 * mascara1;
+    const mascara3 = mascara2*a1;
+    const mascara9 = EsfAdmisivelX/ mascara3;
+
+    const a9 = 0.4;
+    const b9 = -d;
+    const c9 = mascara9;
+
+    const delta9 = b9 * b9 - 4 * a9 * c9;
+    const sqrtDelta9 = Math.sqrt(delta9);
+    const mascara = (-b9 - sqrtDelta9) / (2 * a9);
+
+    const a = 0.4;
+    const b = -d;
+    const c = mascara9;
+
+  const delta = b * b - 4 * a * c;
+  const sqrtDelta = Math.sqrt(delta);
+  const x1 = (-b + sqrtDelta) / (2 * a);
+
+    // Fim
+
+    // VERIFICAÇÃO DE DOMINIO
+    const dominio = 0.259*(b1-3.5);
+
+    if (mascara < dominio) {
+    result3 = "SIM Dominio 2";
+  } else {
+    result3 = "NÃO Dominio 2";
+  }
+
+  const dominio3 = 0.628*(b1-3.5);
+
+if (mascara < dominio3) {
+result33 = "SIM Dominio 3";
+} else {
+result33 = "NÃO Dominio 3";
+}
+
+
+
+  // FIM
+  const EsfAdmisivelY= mascara;
+   
+
+  // 4º Passo - Verificação bx = (X/d) < 0,45
+  const Formula4 = 0.45;
+  const bx = mascara/36;
+
+  if (bx>Formula4) {
+result34 = "Não Passou na Verificação ( usar armadura dupla)";
+} else {
+result34 = "Sim Passou na Verificação ( Não usar armadura dupla)";
+}
+
+
+
+
+
+// 6 PASSO - Cálculo das armaduras
+const As1 = EsfAdmisivelX/((50/1.15)*(d-0.4*mascara));
+
+const Qbarras2 = As1/barras20;
+
+const Asminimo = (0.15/100)*a1*b1 ;
+
+
+    
+
+    document.getElementById("resultado").innerHTML = `Momento: Mx = (Q*L²)/8 = <br>1 Mx = (${c1}*${d1}²)/8 = ${EsfAdmisivel.toFixed(1)} kN 
+    <br><br> 1: ${kgf.toFixed(1)} Tranformado em kgf
+    <br> 1: ${EsfAdmisivelX.toFixed(1)} Adicionado 40%
+    <br><br>2 Passo - determinar a posição da linha neutra (X) <br> ${EsfAdmisivelX.toFixed(0)} = 0,68*(3,0/1,4)*X*${a1}*(${d}-0,4*X) 
+    <br><br>1: ${EsfAdmisivelY.toFixed(2)} Resultado da equação1
+    <br> 1: ${x1.toFixed(2)} Resultado da equação2 
+    <br><br>3 Passo -  Verificação do domínio de cálculo 
+    <br> 1: ${mascara.toFixed(2)} > ${dominio.toFixed(2)} ${result3} Verifivação Dominio 2
+    <br> 1: ${mascara.toFixed(2)} > ${dominio3.toFixed(2)} ${result33} Verifivação Dominio 3 <br><br> 4º Passo - Verificação bx = (X/d) < 0,45
+    <br> bx = ${bx.toFixed(2)} < ${Formula4} < ${result34}
+    <br><br>Usar a altura da linha neutra (X)  
+    <br> X = ${EsfAdmisivelY.toFixed(2)}
+   
+   <br><br>5 PASSO - Cálculo das armaduras
+   <br> ${EsfAdmisivelX.toFixed(1)}/((50/1.15)*(${d}-0.4*${EsfAdmisivelY.toFixed(2)})) = As1: ${As1.toFixed(2)}
+  
+
+<br><br>Área da barra de B/10mm
+<br> 1: ${barras.toFixed(2)}
+<br>Área da barra de B/16mm
+<br> 1: ${barras16.toFixed(2)}
+<br>Área da barra de B/20mm
+<br> 1: ${barras20.toFixed(2)}
+
+
+<br><br>Armadura Armadura tracionada Q.Barra: ${As1.toFixed(2)} / ${barras20.toFixed(2)} = ${Qbarras2.toFixed(2)} barras ¢20 mm
+<br>Arredonde para Numeros Par 
+
+<br><br>7 - PASSO - Verificação da armadura mínima
+<br> As.min = (0,15/100)*${a1}*${b1} = ${Asminimo.toFixed(2)} cm² = ${As1.toFixed(2)} > ${Asminimo.toFixed(2)} cm² OK
+
+ `;
+
+}
+
+</script>
