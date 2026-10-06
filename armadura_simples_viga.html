@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Armadura Simples da Viga</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E9E7E2;--card:#F7F6F3;--ink:#1B2230;--muted:#5B6372;--line:#C9C6BE;--accent:#1F4FD8;--accent-ink:#fff;--ok:#1F7A4D;--warn:#A8461B;--draw:#DAD7CE;--bar:#1B2230;--est:#C26A12;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14181F;--card:#1D232D;--ink:#E8EAEE;--muted:#9AA3B2;--line:#343C49;--accent:#6E96FF;--accent-ink:#0E1420;--ok:#59C58D;--warn:#F08A5D;--draw:#2C3441;--bar:#E8EAEE;--est:#F0A04B}}
+:root[data-theme="dark"]{--bg:#14181F;--card:#1D232D;--ink:#E8EAEE;--muted:#9AA3B2;--line:#343C49;--accent:#6E96FF;--accent-ink:#0E1420;--ok:#59C58D;--warn:#F08A5D;--draw:#2C3441;--bar:#E8EAEE;--est:#F0A04B}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:16px/1.5 Archivo,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+main{max-width:1080px;margin:0 auto;padding:24px 18px 24px}
+h1{font-size:clamp(26px,5vw,38px);font-weight:800;letter-spacing:-.02em;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 24px;max-width:62ch}
+.grid{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:900px){.grid{grid-template-columns:380px 1fr;align-items:start}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+h2{font-size:18px;margin:0 0 12px;font-weight:600}
+h3{font-size:15px;margin:16px 0 8px;font-weight:600}
+label{display:block;font-size:14px;color:var(--muted);margin-bottom:10px}
+label.chk{display:flex;gap:8px;align-items:center;color:var(--ink)}
+label.chk input{width:auto;margin:0}
+input,select{width:100%;margin-top:4px;padding:10px 12px;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px}
+input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dbox{border-left:5px solid var(--accent);background:var(--bg);border-radius:6px;padding:10px 12px;margin:4px 0 12px;font-variant-numeric:tabular-nums}
+.dbox span{display:block;font-size:12px;color:var(--muted)}
+.dbox b{font-size:17px}
+details{margin-top:6px}summary{cursor:pointer;font-weight:600;font-size:14px;padding:6px 0}
+.hero{display:grid;gap:16px;grid-template-columns:1fr;align-items:center}
+@media(min-width:600px){.hero{grid-template-columns:220px 1fr}}
+.size{font-size:clamp(28px,6vw,44px);font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.sm{color:var(--muted);margin-top:4px}
+.badge{display:inline-block;margin-top:10px;padding:4px 10px;border-radius:999px;font-size:13px;font-weight:600;border:1px solid currentColor}
+.ok{color:var(--ok)}.warn{color:var(--warn)}
+svg{width:100%;height:auto;display:block}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:16px}
+.tile{border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.tile span{display:block;font-size:12px;color:var(--muted)}
+.tile b{font-size:17px;font-variant-numeric:tabular-nums}
+.step{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+.step b{display:block;font-weight:600}
+.step p{margin:2px 0;color:var(--muted);font-size:15px;font-variant-numeric:tabular-nums}
+.alerts{margin:0 0 12px;padding-left:18px;color:var(--warn);font-weight:600;font-size:14px}
+.notes{margin:16px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+.err{color:var(--warn);font-weight:600}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+#tema{padding:8px 12px;font:inherit;font-size:13px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:6px;cursor:pointer}
+.leg{font-size:13px;color:var(--muted);margin-top:4px}
+.autor{max-width:1080px;margin:0 auto;padding:20px 18px 40px;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:14px}
+.autor h3{margin:0 0 6px;color:var(--ink)}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <div>
+      <h1>Armadura simples da viga</h1>
+      <p class="sub">Viga biapoiada com carga uniforme, seção retangular, flexão simples (NBR 6118). A altura útil d é calculada: h − cobrimento − bitola do ferro.</p>
+    </div>
+    <button id="tema" type="button" aria-label="Alternar tema claro e escuro">Tema</button>
+  </div>
+
+  <div class="grid">
+    <section class="card" aria-label="Dados da viga">
+      <h2>Dados da viga</h2>
+      <div class="row">
+        <label>Largura b (cm)<input id="b" type="number" step="any" min="5" value="25" inputmode="decimal"></label>
+        <label>Altura h (cm)<input id="h" type="number" step="any" min="10" value="40" inputmode="decimal"></label>
+      </div>
+      <div class="row">
+        <label>Carga Q (kN/m)<input id="Q" type="number" step="any" min="0" value="47.57" inputmode="decimal"></label>
+        <label>Comprimento L (m)<input id="L" type="number" step="any" min="0.1" value="3.7" inputmode="decimal"></label>
+      </div>
+      <label>Fck do concreto (MPa)<input id="fck" type="number" step="any" min="1" max="50" value="25" inputmode="decimal"></label>
+
+      <h3>Altura útil (d)</h3>
+      <div class="row">
+        <label>Cobrimento (cm)<input id="cob" type="number" step="any" min="0" value="3" inputmode="decimal"></label>
+        <label>Bitola do ferro (mm)
+          <select id="phi"><option>8</option><option>10</option><option>12.5</option><option>16</option><option selected>20</option><option>25</option></select>
+        </label>
+      </div>
+      <div class="dbox" aria-live="polite"><span>d = h − cobrimento − bitola</span><b id="dcalc"></b></div>
+
+      <label class="chk"><input id="par" type="checkbox" checked> Arredondar o número de barras para par</label>
+      <label class="chk"><input id="pp" type="checkbox"> Somar o peso próprio da viga (25 kN/m³)</label>
+
+      <details>
+        <summary>Mais ajustes</summary>
+        <div class="row">
+          <label>γf (cargas)<input id="gf" type="number" step="any" min="1" value="1.4" inputmode="decimal"></label>
+          <label>γc (concreto)<input id="gc" type="number" step="any" min="1" value="1.4" inputmode="decimal"></label>
+        </div>
+        <div class="row">
+          <label>γs (aço)<input id="gs" type="number" step="any" min="1" value="1.15" inputmode="decimal"></label>
+          <label>Aço
+            <select id="fyk"><option value="500" selected>CA-50</option><option value="600">CA-60</option></select>
+          </label>
+        </div>
+        <label>Estribo Ø (mm), só para ver se as barras cabem<input id="phit" type="number" step="any" min="0" value="5" inputmode="decimal"></label>
+      </details>
+    </section>
+
+    <section class="card" aria-live="polite" aria-label="Resultado">
+      <div id="erro" class="err" hidden></div>
+      <div id="saida">
+        <ul class="alerts" id="alertas"></ul>
+        <div class="hero">
+          <div>
+            <svg id="secao" viewBox="0 0 220 280" role="img" aria-label="Seção transversal da viga com as barras tracionadas"></svg>
+            <div class="leg">Seção em escala. Laranja: estribo.</div>
+          </div>
+          <div>
+            <div class="size" id="titulo"></div>
+            <div class="sm" id="sub2"></div>
+            <span class="badge" id="badge"></span>
+          </div>
+        </div>
+        <div class="tiles" id="tiles"></div>
+        <div id="passos"></div>
+        <ul class="notes" id="notas"></ul>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="autor">
+  <h3>Desenvolvedor</h3>
+  Jose Robson da Silva<br>
+  Técnico em Edificações<br>
+  Estudante de Engenharia Civil<br>
+  INST: @joserobson20
+</footer>
+
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var num=function(i){return parseFloat($(i).value)};
+  var fmt=function(n,d){return Number(n).toLocaleString('pt-BR',{maximumFractionDigits:d==null?2:d})};
+  var RHO=[[20,.150],[25,.150],[30,.150],[35,.164],[40,.179],[45,.194],[50,.208]];
+  function rhoMin(f){
+    if(f<=30) return .150;
+    for(var i=1;i<RHO.length;i++) if(f<=RHO[i][0]){var a=RHO[i-1],b=RHO[i];return a[1]+(b[1]-a[1])*(f-a[0])/(b[0]-a[0]);}
+    return .208;
+  }
+
+  function desenhar(b,h,cv,phit,phi,n,nmax){
+    var sc=Math.min(170/b,250/h), w=b*sc, hh=h*sc, x0=(220-w)/2+6, y0=20+(250-hh)/2, o='';
+    o+='<rect x="'+x0+'" y="'+y0+'" width="'+w+'" height="'+hh+'" fill="var(--draw)" stroke="var(--ink)" stroke-width="2"/>';
+    o+='<rect x="'+(x0+cv*sc)+'" y="'+(y0+cv*sc)+'" width="'+(w-2*cv*sc)+'" height="'+(hh-2*cv*sc)+'" fill="none" stroke="var(--est)" stroke-width="1.5"/>';
+    var r=phi/20*sc, edge=cv+phit/10, inner=b-2*edge-phi/10, left=n, layer=0;
+    while(left>0 && layer<4){
+      var k=Math.min(left,nmax>0?nmax:left), yy=y0+hh-(edge+phi/20+layer*(phi/10+2.3))*sc;
+      for(var i=0;i<k;i++){var xx=k===1?x0+w/2:x0+(edge+phi/20+i*inner/(k-1))*sc;o+='<circle cx="'+xx+'" cy="'+yy+'" r="'+Math.max(r,2)+'" fill="var(--bar)"/>';}
+      left-=k; layer++;
+    }
+    o+='<text x="'+(x0+w/2)+'" y="'+(y0-6)+'" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)">'+fmt(b)+' cm</text>';
+    o+='<text x="'+(x0-8)+'" y="'+(y0+hh/2)+'" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)" transform="rotate(-90 '+(x0-8)+' '+(y0+hh/2)+')">'+fmt(h)+' cm</text>';
+    $('secao').innerHTML=o;
+  }
+
+  function calcular(){
+    var ids=['Q','L','b','h','fck','fyk','cob','phit','phi','gf','gc','gs'], v={};
+    ids.forEach(function(i){v[i]=num(i)});
+    var ok=ids.every(function(i){return isFinite(v[i])})&&v.Q>=0&&v.L>0&&v.b>0&&v.h>0&&v.fck>0&&v.gf>=1&&v.gc>=1&&v.gs>=1;
+    $('erro').hidden=ok;$('saida').hidden=!ok;
+    if(!ok){$('dcalc').textContent='—';$('erro').textContent='Preencha todos os campos com valores válidos.';return;}
+    var b=v.b,h=v.h,phi=v.phi,al=[];
+
+    // d calculado: h - cobrimento - bitola do ferro
+    var d=h-v.cob-phi/10;
+    $('dcalc').textContent=fmt(h,1)+' − '+fmt(v.cob,1)+' − '+fmt(phi/10,2)+' = '+fmt(d,2)+' cm';
+    if(!(d>0)){$('erro').hidden=false;$('saida').hidden=true;$('erro').textContent='Altura útil zero ou negativa: confira h, cobrimento e bitola.';return;}
+    if(v.fck>50) al.push('fck acima de 50 MPa: o diagrama retangular (0,68 e 0,4) muda; fora do escopo.');
+
+    // 1 momento
+    var pp=$('pp').checked?b*h/10000*25:0, Q=v.Q+pp, L=v.L;
+    var M=Q*L*L/8, Mcm=M*100, Md=Mcm*v.gf, Vk=Q*L/2;
+    // 2 resistências
+    var fcd=v.fck/10/v.gc, fyd=v.fyk/10/v.gs, epsyd=fyd/21000;
+    // 3 linha neutra
+    var a=0.68*fcd*b, A=0.4*a, B=a*d, disc=B*B-4*A*Md;
+    if(disc<0){$('erro').hidden=false;$('saida').hidden=true;$('erro').textContent='Seção insuficiente: o momento é maior que o máximo que o concreto resiste. Aumente h, b ou fck.';return;}
+    var sq=Math.sqrt(disc), x1=(B-sq)/(2*A), x2=(B+sq)/(2*A), x=x1;
+    // 4 domínio
+    var x23=0.259*d, x34=0.0035/(0.0035+epsyd)*d, dom=x<x23?2:(x<=x34?3:4);
+    var bx=x/d, bxok=bx<=0.45;
+    if(!bxok) al.push('x/d = '+fmt(bx,2)+' passou de 0,45: aumente a seção ou o fck (armadura dupla não calculada aqui).');
+    if(dom===4) al.push('Domínio 4: ruptura frágil e o aço não escoa. Aumente a seção.');
+    // 5 armadura
+    var z=d-0.4*x, As=Md/(fyd*z);
+    var Ab=Math.PI*Math.pow(phi/10,2)/4, nb=As/Ab, nmin=Math.ceil(nb-1e-9), n=nmin;
+    if($('par').checked&&n%2===1) n++;
+    var ah=Math.max(2,phi/10,1.2*1.9), bw=b-2*(v.cob+v.phit/10), nmax=Math.floor((bw+ah)/(phi/10+ah));
+    if(nmax<1) nmax=1;
+    // 6 mínima
+    var rho=rhoMin(v.fck), Asmin=rho/100*b*h, Asmax=0.04*b*h;
+    if(As<Asmin){ var nm=Math.ceil(Asmin/Ab-1e-9); if(nm>n) n=nm; al.push('As calculada menor que a mínima: vale As mín = '+fmt(Asmin)+' cm².'); }
+    var Asef=n*Ab;
+    if(n>nmax) al.push(n+' barras Ø'+fmt(phi,1)+' não cabem em uma camada (máx. '+nmax+'): use duas camadas (d diminui) ou barra de maior diâmetro.');
+    if(Asef>Asmax) al.push('Armadura passou de 4% da seção: aumente a seção.');
+    if(v.fyk===600) al.push('CA-60 em viga é incomum; confira se é o aço que você quer.');
+
+    $('alertas').innerHTML=al.map(function(t){return '<li>'+t+'</li>'}).join('');
+    var ph=fmt(phi,1);
+    $('titulo').textContent=n+' Ø'+ph+' mm';
+    $('sub2').textContent='As adotada = '+fmt(Asef)+' cm² (necessária '+fmt(Math.max(As,Asmin))+' cm²). Viga '+fmt(b,0)+' × '+fmt(h,0)+' cm, vão '+fmt(L)+' m, d = '+fmt(d,1)+' cm.';
+    var good=bxok&&dom!==4;
+    $('badge').textContent=good?'Domínio '+dom+', x/d = '+fmt(bx,2)+' (OK)':'Verificação não atendida';
+    $('badge').className='badge '+(good?'ok':'warn');
+    desenhar(b,h,v.cob,v.phit,phi,n,nmax);
+
+    var tl=[['Md',fmt(Md,0)+' kN·cm'],['d',fmt(d,2)+' cm'],['Linha neutra x',fmt(x)+' cm'],['x / d',fmt(bx,2)],['Domínio',String(dom)],['As necessária',fmt(As)+' cm²'],['As mín',fmt(Asmin)+' cm²'],['Reação em cada apoio',fmt(Vk)+' kN']];
+    $('tiles').innerHTML=tl.map(function(t){return '<div class="tile"><span>'+t[0]+'</span><b>'+t[1]+'</b></div>'}).join('');
+
+    var p=[
+     ['Momento fletor','Q = '+fmt(Q)+' kN/m'+(pp?' (inclui '+fmt(pp)+' de peso próprio)':'')+'. M = Q × L² / 8 = ('+fmt(Q)+' × '+fmt(L)+'²) / 8 = '+fmt(M,1)+' kN·m = '+fmt(Mcm,1)+' kN·cm. Md = M × γf = '+fmt(Mcm,1)+' × '+fmt(v.gf)+' = '+fmt(Md,1)+' kN·cm.'],
+     ['Altura útil e resistências','d = h − cobrimento − bitola = '+fmt(h,1)+' − '+fmt(v.cob,1)+' − '+fmt(phi/10,2)+' = '+fmt(d,2)+' cm. fcd = fck / γc = '+fmt(v.fck/10)+' / '+fmt(v.gc)+' = '+fmt(fcd,4)+' kN/cm². fyd = fyk / γs = '+fmt(v.fyk/10,0)+' / '+fmt(v.gs)+' = '+fmt(fyd)+' kN/cm².'],
+     ['Linha neutra (x)','Md = 0,68 × fcd × b × x × (d − 0,4x), ou seja, '+fmt(Md,0)+' = 0,68 × ('+fmt(v.fck/10)+'/'+fmt(v.gc)+') × '+fmt(b)+' × x × ('+fmt(d,2)+' − 0,4x). Número fixo: 0,68 × '+fmt(fcd,4)+' × '+fmt(b)+' = '+fmt(a,3)+'. Distribuindo: '+fmt(Md,0)+' = '+fmt(B,2)+' x − '+fmt(A,3)+' x². Forma padrão: '+fmt(A,3)+' x² − '+fmt(B,2)+' x + '+fmt(Md,0)+' = 0. Δ = '+fmt(B,2)+'² − 4 × '+fmt(A,3)+' × '+fmt(Md,0)+' = '+fmt(disc,0)+', √Δ = '+fmt(sq,2)+'. Resultado da equação 1: x1 = '+fmt(x1)+' cm. Resultado da equação 2: x2 = '+fmt(x2)+' cm. Vale a raiz menor, x = '+fmt(x)+' cm (a outra passa da altura da viga).'],
+     ['Domínio de cálculo','x23 = 0,259 × d = 0,259 × '+fmt(d,2)+' = '+fmt(x23)+' cm. x34 = '+fmt(x34/d,3)+' × d = '+fmt(x34)+' cm. '+fmt(x)+(x>x23?' > ':' < ')+fmt(x23)+(x>x23?': NÃO é domínio 2. ':': SIM, domínio 2. ')+fmt(x)+(x<=x34?' < ':' > ')+fmt(x34)+(dom===3?': SIM, domínio 3.':(dom===4?': NÃO é domínio 3, é o domínio 4.':': como está no domínio 2, não é domínio 3.'))],
+     ['Ductilidade','bx = x / d = '+fmt(x)+' / '+fmt(d,2)+' = '+fmt(bx,3)+(bxok?' < 0,45: passou na verificação, não usar armadura dupla.':' > 0,45: não passou, seria preciso armadura dupla.')],
+     ['Armadura tracionada','As = Md / (fyd × (d − 0,4x)) = '+fmt(Md,1)+' / ('+fmt(fyd)+' × ('+fmt(d,2)+' − 0,4 × '+fmt(x)+')) = '+fmt(Md,1)+' / ('+fmt(fyd)+' × '+fmt(z)+') = '+fmt(As)+' cm².'],
+     ['Escolha das barras','Áreas: Ø10 = '+fmt(Math.PI*.25,2)+' cm², Ø16 = '+fmt(Math.PI*.64,2)+' cm², Ø20 = '+fmt(Math.PI,2)+' cm². Com Ø'+ph+' mm ('+fmt(Ab,2)+' cm²): '+fmt(As)+' / '+fmt(Ab,2)+' = '+fmt(nb)+' → '+nmin+' barras'+($('par').checked&&nmin%2===1?', arredondado para par: '+(nmin+1):'')+'. Adotado: '+n+' Ø'+ph+' = '+fmt(Asef)+' cm². Cabem até '+nmax+' por camada ('+fmt(bw)+' cm de largura útil, espaço livre mínimo de '+fmt(ah,1)+' cm).'],
+     ['Armadura mínima','ρ mín = '+fmt(rho,3)+'% (NBR 6118, tabela 17.3). As,mín = ('+fmt(rho,3)+'/100) × '+fmt(b)+' × '+fmt(h)+' = '+fmt(Asmin)+' cm². '+(As>=Asmin?fmt(As)+' > '+fmt(Asmin)+' cm²: OK.':fmt(As)+' < '+fmt(Asmin)+' cm²: vale a mínima.')+' Máximo de 4% da seção: '+fmt(Asmax)+' cm².']
+    ];
+    $('passos').innerHTML=p.map(function(s,i){return '<div class="step"><b>'+(i+1)+'. '+s[0]+'</b><p>'+s[1]+'</p></div>'}).join('');
+    $('notas').innerHTML=[
+      'Altura útil pela regra h − cobrimento − bitola. O cálculo completo da norma usa também o estribo e metade da bitola (d = h − c − Øestribo − Ø/2), que dá um d um pouco maior; a regra usada aqui fica a favor da segurança.',
+      'Pré-dimensionamento da armadura longitudinal tracionada (flexão simples, armadura simples). Estribos, flecha, ancoragem e fissuração não estão incluídos.',
+      'Arredondar para par é a regra do exemplo da aula. Desmarque a opção para ver o menor número de barras que atende.'
+    ].map(function(t){return '<li>'+t+'</li>'}).join('');
+  }
+
+  document.querySelectorAll('input,select').forEach(function(e){e.addEventListener('input',calcular);e.addEventListener('change',calcular)});
+  $('tema').addEventListener('click',function(){
+    var r=document.documentElement,dark=r.getAttribute('data-theme')==='dark'||(!r.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
+    r.setAttribute('data-theme',dark?'light':'dark');
+  });
+  calcular();
+})();
+</script>
+</body>
+</html>
