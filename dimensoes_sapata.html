@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dimensões da Sapata</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E9E7E2;--card:#F7F6F3;--ink:#1B2230;--muted:#5B6372;--line:#C9C6BE;--accent:#1F4FD8;--accent-ink:#fff;--ok:#1F7A4D;--warn:#A8461B;--draw:#DAD7CE;--pil:#7A8190;--ba:#1F4FD8;--bb:#C26A12;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14181F;--card:#1D232D;--ink:#E8EAEE;--muted:#9AA3B2;--line:#343C49;--accent:#6E96FF;--accent-ink:#0E1420;--ok:#59C58D;--warn:#F08A5D;--draw:#2C3441;--pil:#9AA3B2;--ba:#6E96FF;--bb:#F0A04B}}
+:root[data-theme="dark"]{--bg:#14181F;--card:#1D232D;--ink:#E8EAEE;--muted:#9AA3B2;--line:#343C49;--accent:#6E96FF;--accent-ink:#0E1420;--ok:#59C58D;--warn:#F08A5D;--draw:#2C3441;--pil:#9AA3B2;--ba:#6E96FF;--bb:#F0A04B}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:16px/1.5 Archivo,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+main{max-width:1080px;margin:0 auto;padding:24px 18px 24px}
+h1{font-size:clamp(26px,5vw,38px);font-weight:800;letter-spacing:-.02em;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 24px;max-width:62ch}
+.grid{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:900px){.grid{grid-template-columns:360px 1fr;align-items:start}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+h2{font-size:18px;margin:0 0 12px;font-weight:600}
+h3{font-size:15px;margin:18px 0 8px;font-weight:600}
+label{display:block;font-size:14px;color:var(--muted);margin-bottom:10px}
+label.chk{display:flex;gap:8px;align-items:flex-start;color:var(--ink)}
+label.chk input{width:auto;margin:4px 0 0}
+input,select{width:100%;margin-top:4px;padding:10px 12px;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px}
+input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+details{margin-top:6px}summary{cursor:pointer;font-weight:600;font-size:14px;padding:6px 0}
+.hero{display:grid;gap:16px;grid-template-columns:1fr;align-items:center}
+@media(min-width:620px){.hero{grid-template-columns:250px 1fr}}
+.size{font-size:clamp(28px,6vw,44px);font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.sm{color:var(--muted);margin-top:4px}
+svg{width:100%;height:auto;display:block}
+.leg{font-size:13px;color:var(--muted);margin-top:4px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tile{border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.tile span{display:block;font-size:12px;color:var(--muted)}
+.tile b{font-size:17px;font-variant-numeric:tabular-nums}
+.tile small{display:block;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.alerts{margin:0 0 12px;padding-left:18px;color:var(--warn);font-weight:600;font-size:14px}
+.err{color:var(--warn);font-weight:600}
+.notes{margin:16px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+#tema{padding:8px 12px;font:inherit;font-size:13px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:6px;cursor:pointer}
+.rodape{max-width:1080px;margin:0 auto;padding:8px 18px 40px;display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:800px){.rodape{grid-template-columns:2fr 1fr}}
+.rodape h3{margin:0 0 8px}
+.rodape ul{margin:0;padding-left:18px;color:var(--muted);font-size:14px}
+.rodape li{margin-bottom:4px}
+.rodape a{color:var(--accent)}
+.rodape p{margin:0;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <div>
+      <h1>Dimensões da sapata</h1>
+      <p class="sub">Sapata isolada rígida com balanços iguais: lados A e B, altura, momentos pelas seções de referência, armadura e espaçamento das barras.</p>
+    </div>
+    <button id="tema" type="button" aria-label="Alternar tema claro e escuro">Tema</button>
+  </div>
+
+  <div class="grid">
+    <section class="card" aria-label="Dados da sapata">
+      <h2>Dados</h2>
+      <label>S.sap = (Kmaj · Nk) / σadm, em cm²<input id="S" type="number" step="any" min="1" value="22000" inputmode="decimal"></label>
+      <div class="row">
+        <label>Pilar a (cm)<input id="a" type="number" step="any" min="1" value="20" inputmode="decimal"></label>
+        <label>Pilar b (cm)<input id="b" type="number" step="any" min="1" value="30" inputmode="decimal"></label>
+      </div>
+      <label>Carga do pilar Nk (kN)<input id="N" type="number" step="any" min="1" value="500" inputmode="decimal"></label>
+      <label>Bitola das barras (mm)
+        <select id="phi"><option>6.3</option><option selected>8</option><option>10</option><option>12.5</option><option>16</option></select>
+      </label>
+      <label class="chk"><input id="mesma" type="checkbox"> Usar o mesmo h adotado nas duas direções (os balanços são iguais)</label>
+      <details>
+        <summary>Ajustes</summary>
+        <div class="row">
+          <label>γf (majoração)<input id="gf" type="number" step="any" min="1" value="1.4" inputmode="decimal"></label>
+          <label>d = h − (cm)<input id="cd" type="number" step="any" min="0" value="5" inputmode="decimal"></label>
+        </div>
+      </details>
+    </section>
+
+    <section class="card" aria-live="polite" aria-label="Resultado">
+      <div id="erro" class="err" hidden></div>
+      <div id="saida">
+        <ul class="alerts" id="alertas"></ul>
+        <div class="hero">
+          <div>
+            <svg id="planta" viewBox="0 0 260 250" role="img" aria-label="Planta da sapata com pilar e barras em escala"></svg>
+            <div class="leg">Azul: barras da faixa A. Laranja: barras da faixa B.</div>
+          </div>
+          <div>
+            <div class="size" id="titulo"></div>
+            <div class="sm" id="sub2"></div>
+          </div>
+        </div>
+        <div id="grupos"></div>
+        <ul class="notes" id="notas"></ul>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="rodape">
+  <section>
+    <h3>Referências</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=_GGZkEnP-XE&amp;t=6263s" target="_blank" rel="noopener">Tassiane Oliveira – videoaula (YouTube)</a></li>
+      <li>ABNT NBR 6118:2014. Projeto de estruturas de concreto – Procedimento.</li>
+      <li>ABNT NBR 6122. Projeto e execução de fundações (versão vigente).</li>
+      <li>ABNT NBR 6120:2019. Ações para o cálculo de estruturas de edificações.</li>
+      <li>ALONSO, U. R. Exercícios de fundações. São Paulo: Blucher.</li>
+      <li>VELLOSO, D. A.; LOPES, F. R. Fundações. São Paulo: Oficina de Textos.</li>
+      <li>BASTOS, P. S. S. Fundações: sapatas (notas de aula). Bauru: UNESP.</li>
+      <li>MONTOYA, P. J.; MESEGUER, A. G.; CABRÉ, F. M. Hormigón armado. Barcelona: Gustavo Gili.</li>
+    </ul>
+  </section>
+  <section>
+    <h3>Desenvolvedor</h3>
+    <p>Jose Robson da Silva<br>Técnico em Edificações<br>Estudante de Engenharia Civil</p>
+  </section>
+</footer>
+
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var num=function(i){return parseFloat($(i).value)};
+  var fmt=function(n,d){return Number(n).toLocaleString('pt-BR',{maximumFractionDigits:d==null?2:d})};
+  var up5=function(x){return Math.ceil(x/5-1e-9)*5};
+
+  function planta(A,B,a,b,sA,sB){
+    var sc=Math.min(210/B,190/A), w=B*sc, h=A*sc, x0=(260-w)/2+8, y0=26+(200-h)/2, o='';
+    o+='<rect x="'+x0+'" y="'+y0+'" width="'+w+'" height="'+h+'" fill="var(--draw)" stroke="var(--ink)" stroke-width="2"/>';
+    for(var p=sA*sc/2;p<h-1;p+=Math.max(sA*sc,2.5)) o+='<line x1="'+(x0+3)+'" y1="'+(y0+p)+'" x2="'+(x0+w-3)+'" y2="'+(y0+p)+'" stroke="var(--ba)" stroke-width=".7"/>';
+    for(var q=sB*sc/2;q<w-1;q+=Math.max(sB*sc,2.5)) o+='<line x1="'+(x0+q)+'" y1="'+(y0+3)+'" x2="'+(x0+q)+'" y2="'+(y0+h-3)+'" stroke="var(--bb)" stroke-width=".7"/>';
+    o+='<rect x="'+(x0+(B-b)/2*sc)+'" y="'+(y0+(A-a)/2*sc)+'" width="'+(b*sc)+'" height="'+(a*sc)+'" fill="var(--pil)" stroke="var(--ink)" stroke-width="1.5"/>';
+    o+='<text x="'+(x0+w/2)+'" y="'+(y0-8)+'" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)">B = '+fmt(B,0)+' cm</text>';
+    o+='<text x="'+(x0-8)+'" y="'+(y0+h/2)+'" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)" transform="rotate(-90 '+(x0-8)+' '+(y0+h/2)+')">A = '+fmt(A,0)+' cm</text>';
+    $('planta').innerHTML=o;
+  }
+  function grupo(t,tiles){
+    return '<h3>'+t+'</h3><div class="tiles">'+tiles.map(function(x){return '<div class="tile"><span>'+x[0]+'</span><b>'+x[1]+'</b>'+(x[2]?'<small>'+x[2]+'</small>':'')+'</div>'}).join('')+'</div>';
+  }
+
+  function calcular(){
+    var ids=['S','a','b','N','phi','gf','cd'], v={};
+    ids.forEach(function(i){v[i]=num(i)});
+    var ok=ids.every(function(i){return isFinite(v[i])})&&v.S>0&&v.a>0&&v.b>0&&v.N>0&&v.gf>=1;
+    $('erro').hidden=ok;$('saida').hidden=!ok;
+    if(!ok){$('erro').textContent='Preencha todos os campos com valores válidos.';return;}
+    var al=[], a=v.a, b=v.b, fyd=50/1.15, mesma=$('mesma').checked;
+
+    // 1 dimensões
+    var Araw=(-(b-a)+Math.sqrt(Math.pow(b-a,2)+4*v.S))/2, A=up5(Araw), B=A+(b-a);
+    if(!(B>0)){$('erro').hidden=false;$('saida').hidden=true;$('erro').textContent='Dimensões inválidas: confira S.sap e as seções do pilar.';return;}
+    var bal=(B-b)/2, hmin=(B-b)/3, h=up5(hmin), h0=Math.ceil(h/3);
+    // 2 momentos
+    var tens=v.gf*v.N/(A*B), SA=bal+0.15*a, SB=bal+0.15*b;
+    var MA=tens*SB*SB/2*A, MB=tens*SA*SA/2*B;
+    // 3 armadura
+    var hA=mesma?h:hmin, dA=hA-v.cd, dB=h-v.cd;
+    if(!(dA>0)||!(dB>0)){$('erro').hidden=false;$('saida').hidden=true;$('erro').textContent='Altura útil inválida: reduza o valor de "d = h −".';return;}
+    var AsA=MA/(0.85*dA*fyd), AsB=MB/(0.85*dB*fyd), amA=AsA/(A/100), amB=AsB/(B/100);
+    var Ab=Math.PI*Math.pow(v.phi/10,2)/4, nA=Math.ceil(amA/Ab-1e-9), nB=Math.ceil(amB/Ab-1e-9);
+    var sA=Math.floor(100/nA), sB=Math.floor(100/nB), ph=fmt(v.phi,1);
+    if(Math.abs(A-B)>0.01&&A>B) al.push('A é o lado maior aqui; o programa chama de A o lado paralelo à seção "a" do pilar.');
+    if(h<40) al.push('h adotado abaixo de 40 cm, mínimo usado no programa.');
+    if(!mesma&&Math.abs(hmin-h)>0.01) al.push('No método do programa, a faixa A usa h = '+fmt(hmin)+' cm (sem arredondar) e a faixa B usa h = '+fmt(h,0)+' cm. Como os balanços são iguais, marque a opção "mesmo h" para usar '+fmt(h,0)+' cm nas duas.');
+    if(sA<5||sB<5) al.push('Espaçamento menor que 5 cm: use uma bitola maior.');
+
+    $('alertas').innerHTML=al.map(function(t){return '<li>'+t+'</li>'}).join('');
+    $('titulo').textContent=fmt(A,0)+' × '+fmt(B,0)+' cm';
+    $('sub2').textContent='Altura h = '+fmt(h,0)+' cm, balanço de '+fmt(bal,1)+' cm, barras Ø'+ph+' mm: c/'+sA+' cm (faixa A) e c/'+sB+' cm (faixa B).';
+    planta(A,B,a,b,sA,sB);
+
+    $('grupos').innerHTML=
+      grupo('Dimensões',[
+        ['Lado A',fmt(A,0)+' cm','Raiz da equação: '+fmt(Araw,1)+' cm, arredondada de 5 em 5'],
+        ['Lado B',fmt(B,0)+' cm','B = A + (b − a)'],
+        ['Balanço',fmt(bal,2)+' cm','(B − b)/2'],
+        ['Altura mínima',fmt(hmin,2)+' cm','h ≥ (B − b)/3'],
+        ['Altura h adotada',fmt(h,0)+' cm','múltiplo de 5 cm'],
+        ['Faces verticais',fmt(h0,0)+' cm','h/3']
+      ])+
+      grupo('Momentos',[
+        ['Tensão de cálculo',fmt(tens,5)+' kN/cm²','γf·N / (A·B) = '+fmt(tens*10000,0)+' kPa'],
+        ['Seção ref. A',fmt(SA,2)+' cm','balanço + 0,15·a'],
+        ['Seção ref. B',fmt(SB,2)+' cm','balanço + 0,15·b'],
+        ['Momento fletor A',fmt(MA,2)+' kN·cm','σ·A·S_B²/2'],
+        ['Momento fletor B',fmt(MB,2)+' kN·cm','σ·B·S_A²/2']
+      ])+
+      grupo('Armadura',[
+        ['d usado em A',fmt(dA,2)+' cm','h − '+fmt(v.cd,1)],
+        ['d usado em B',fmt(dB,2)+' cm','h − '+fmt(v.cd,1)],
+        ['Armadura A',fmt(AsA,2)+' cm²','M/(0,85·d·fyd)'],
+        ['Armadura B',fmt(AsB,2)+' cm²','fyd = '+fmt(fyd,2)+' kN/cm²'],
+        ['Detalhamento A',fmt(amA,2)+' cm²/m','As / '+fmt(A/100,2)+' m'],
+        ['Detalhamento B',fmt(amB,2)+' cm²/m','As / '+fmt(B/100,2)+' m'],
+        ['Área da barra Ø'+ph,fmt(Ab,2)+' cm²','π·Ø²/4'],
+        ['Nº de barras A',nA+' por metro','arredondado para cima'],
+        ['Nº de barras B',nB+' por metro','arredondado para cima'],
+        ['Espaçamento A',sA+' cm','100 / '+nA],
+        ['Espaçamento B',sB+' cm','100 / '+nB]
+      ]);
+    $('notas').innerHTML=[
+      'Nº de barras é por metro de largura. O número de barras e o espaçamento são arredondados para o lado da segurança (barras para cima, espaçamento para baixo).',
+      'A verificação do solo (Kmaj·Nk / (A·B) ≤ σadm) já está embutida no S.sap informado. Armadura mínima, ancoragem e punção não estão incluídas.',
+      'Seções de referência a 0,15 do pilar para dentro da face, critério clássico de dimensionamento de sapatas.'
+    ].map(function(t){return '<li>'+t+'</li>'}).join('');
+  }
+
+  document.querySelectorAll('input,select').forEach(function(e){e.addEventListener('input',calcular);e.addEventListener('change',calcular)});
+  $('tema').addEventListener('click',function(){
+    var r=document.documentElement,dark=r.getAttribute('data-theme')==='dark'||(!r.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
+    r.setAttribute('data-theme',dark?'light':'dark');
+  });
+  calcular();
+})();
+</script>
+</body>
+</html>
