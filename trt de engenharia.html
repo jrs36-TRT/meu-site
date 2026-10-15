@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meus TRTs – José Robson da Silva</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root{--az:#1b3a6b;--az2:#2f6fb5;--bg:#f2f5f9;--bd:#dbe2ec;--mut:#5d6b80}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:#1c2433}
+header{background:linear-gradient(135deg,var(--az),var(--az2));color:#fff;padding:28px 20px 22px}
+.wrap{max-width:1150px;margin:0 auto}
+.perfil{display:flex;gap:16px;align-items:center}
+.av{width:62px;height:62px;border-radius:50%;background:#fff3;display:grid;place-items:center;font-size:22px;font-weight:700;border:2px solid #fff8}
+h1{margin:0;font-size:26px}.sub{opacity:.9}
+.bar{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;align-items:center}
+.bar input[type=search]{flex:1;min-width:220px;padding:9px 12px;border:0;border-radius:8px;font:inherit}
+select,.btn,button{padding:9px 14px;border:0;border-radius:8px;font:inherit;cursor:pointer;background:#fff;color:var(--az)}
+.count{margin-left:auto;font-size:13px;opacity:.9}
+main{max-width:1150px;margin:22px auto;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px}
+.card{background:#fff;border:1px solid var(--bd);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 8px #1b3a6b14;transition:.15s}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 20px #1b3a6b26}
+.prev{height:210px;background:#e8edf5;display:grid;place-items:center;overflow:hidden;position:relative;cursor:pointer;text-decoration:none;color:var(--mut)}
+.prev canvas{width:100%;height:auto;align-self:start}
+.prev .ph{text-align:center;font-size:13px}.prev .ph b{display:block;font-size:34px;color:var(--az2)}
+.badge{position:absolute;top:10px;left:10px;background:var(--az);color:#fff;font-size:12px;padding:3px 9px;border-radius:20px;z-index:2}
+.body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.body h3{margin:0;font-size:17px;color:var(--az)}
+.loc{color:var(--mut);font-size:13px;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:#eaf1fb;color:var(--az);border-radius:6px;padding:2px 8px;font-size:12px}
+.chip.p{background:#fff1de;color:#8a4b00}.chip.s{background:#e7f6ec;color:#1b6b3a}
+dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:13px}
+dt{color:var(--mut)}dd{margin:0}
+.obs{font-size:13px;color:#39465a;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+.obs.open{display:block}
+.acts{display:flex;gap:8px;margin-top:auto;padding-top:6px}
+.acts a,.acts button{flex:1;text-align:center;text-decoration:none;font-size:13px;padding:7px;border:1px solid var(--bd);border-radius:8px;background:#fff;color:var(--az);cursor:pointer}
+.acts a.pri{background:var(--az);color:#fff;border-color:var(--az)}
+.vazio{grid-column:1/-1;text-align:center;color:var(--mut);padding:40px}
+.gen{max-width:1150px;margin:0 auto 30px;padding:0 16px}
+.gen textarea{width:100%;height:170px;font:12px/1.4 monospace;border:1px solid var(--bd);border-radius:8px;padding:8px}
+.hint{color:var(--mut);font-size:13px}
+footer{text-align:center;color:var(--mut);font-size:12px;padding:0 0 24px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="perfil"><div class="av">JR</div>
+    <div><h1 id="nome"></h1><div class="sub" id="cursos"></div></div></div>
+  <div class="bar">
+    <input type="search" id="q" placeholder="Buscar por nº, contratante, cidade, atividade...">
+    <select id="ft"><option value="">Todas as atividades</option><option>Execução</option><option>Projeto</option></select>
+    <label class="btn">+ Ler TRT (PDF)<input type="file" id="f" accept="application/pdf" hidden></label>
+    <span class="count" id="cnt"></span>
+  </div></div></header>
+<main id="grid"></main>
+<div class="gen" id="gen" hidden>
+  <p class="hint" id="genInfo"></p><textarea id="code" readonly></textarea>
+  <div><button id="copiar" style="border:1px solid var(--bd)">Copiar código</button></div>
+</div>
+<footer>Dados extraídos dos próprios TRTs. Para fixar um TRT na página, cole o PDF na pasta <b>pdfs/</b> e adicione o objeto na lista <b>TRTS</b> do código.</footer>
+
+<script>
+// ============ 1) SEUS DADOS (edite aqui) ============
+const PERFIL = {
+  nome: 'José Robson da Silva',
+  cursos: 'Curso Técnico em Edificações · Engenharia Civil'
+};
+// Para cada TRT: coloque o PDF definitivo na pasta "pdfs" e informe o caminho em "pdf".
+// Dica: use "+ Ler TRT (PDF)" na página para gerar este objeto automaticamente.
+const TRTS = [
+  { numero:'CFT2606120387', substitui:'CFT2606015072', tipo:'OBRA / SERVIÇO',
+    contratante:'A Cavalcanti do Nascimento', valor:'R$ 1.200,00', celebrado:'27/07/2026',
+    endereco:'Rua Laranjeira, 328 – Quadra 19, Centro', cidade:'Extremoz', uf:'RN',
+    inicio:'20/07/2026', termino:'20/09/2026', finalidade:'Residencial',
+    atividades:[
+      {tipo:'Execução',codigo:'3152',nome:'Execução de obras / serviços',qtd:'116,600',un:'m²'},
+      {tipo:'Execução',codigo:'3174',nome:'Contra verga',qtd:'116,600',un:'m²'},
+      {tipo:'Execução',codigo:'4108',nome:'Cobertura com telha cerâmica',qtd:'116,600',un:'m²'},
+      {tipo:'Projeto',codigo:'4433',nome:'Projeto arquitetônico',qtd:'116,600',un:'m²'}],
+    obs:'Elaboração de projeto arquitetônico e execução de obra residencial multifamiliar, localizada na Rua Laranjeira, s/n, Loteamento Central Parque, Quadra 19, Lote 328, Centro, Extremoz/RN – CEP 59575-000.',
+    registrada:'11/08/2026', isento:true, chave:'Y2Y8Y', pdf:'pdfs/CFT2606120387.pdf' },
+
+    {
+  "numero": "CFT2403909762",
+  "substitui": "",
+  "tipo": "OBRA / SERVIÇO",
+  "contratante": "Janmerson Emanuel Simplício Pereira",
+  "valor": "R$ 120,00",
+  "celebrado": "Valor:",
+  "endereco": "RUA Dr. Luiz Carlos, RN-016, – Cidade: ASSU UF: RN CEP: 59650000",
+  "cidade": "ASSU",
+  "uf": "RN",
+  "inicio": "07/10/2024",
+  "termino": "07/10/2024",
+  "finalidade": "Comercial",
+  "atividades": [],
+  "obs": "Galpão comercial",
+  "registrada": "08/10/2024",
+  "isento": false,
+  "chave": "9080D",
+  "pdf": "pdfs/CFT2403909762.pdf"
+},
+
+{
+  "numero": "CFT2403808166",
+  "substitui": "",
+  "tipo": "OBRA / SERVIÇO",
+  "contratante": "FRANCISCO HENRIQUE S GUIMARAES LTDA",
+  "valor": "R$ 80.000,00",
+  "celebrado": "Valor:",
+  "endereco": "RODOVIA BR 304 KM 116, 4661 – BR, ÁREA INDUSTRIAL",
+  "cidade": "ITAJÁ",
+  "uf": "RN",
+  "inicio": "16/09/2024",
+  "termino": "30/11/2024",
+  "finalidade": "SEM DEFINIÇÃO",
+  "atividades": [],
+  "obs": "Dique para Lavagem de Caminhão. coberto.",
+  "registrada": "03/09/2024",
+  "isento": false,
+  "chave": "",
+  "pdf": "pdfs/CFT2403808166.x2ZD2.pdf.pdf"
+},
+{
+  "numero": "CFT2505032907",
+  "substitui": "",
+  "tipo": "OBRA / SERVIÇO",
+  "contratante": "ANTONIO GUILHERME LOPES",
+  "valor": "R$ 59.000,00",
+  "celebrado": "Valor:",
+  "endereco": "RUA R. Maria Assunta Vieira,, 160 – Cidade: ASSU UF: RN CEP: 59650000",
+  "cidade": "ASSU",
+  "uf": "RN",
+  "inicio": "07/10/2025",
+  "termino": "06/09/2026",
+  "finalidade": "Comercial",
+  "atividades": [],
+  "obs": "Obra destinada à construção de galpão em estrutura mista, para uso em armazenagem e apoio logístico. O empreendimento será executado conforme normas técnicas e legislação vigente. A finalidade é comercial/industrial, sem alteração de uso residencial.",
+  "registrada": "06/10/2025",
+  "isento": false,
+  "chave": "34ADZ",
+  "pdf": "pdfs/CFT2505032907.pdf"
+},
+];
+
+// ============ 2) LEITURA DO TRT (PDF) ============
+const tc = s => s ? s.charAt(0)+s.slice(1).toLowerCase() : s;
+function parseTRT(raw, nomeArq){
+  const g=(re,s=raw)=>{const m=s.match(re);return m?m[1].trim():''};
+  const sec=(a,b)=>{const i=raw.search(a);if(i<0)return'';const r=raw.slice(i),j=r.search(b);return j<0?r:r.slice(0,j)};
+  const s3=sec(/3\.\s*Dados da Obra/,/4\.\s*Atividade/), s4=sec(/4\.\s*Atividade/,/Ap[óo]s a conclus/), s5=sec(/5\.\s*Observa/,/6\.\s*Informa/);
+  const flat4=s4.replace(/\s+/g,' ');
+  const atividades=flat4.split(/(?=\b\d{2} - [A-ZÇÃÕ]+ >)/).map(c=>{
+    const m=c.match(/^(\d{2}) - ([A-ZÇÃÕ]+) >.*?#(\d+) - (.*?)\s+([\d.]+,\d{3})\s+(\S+)\s*$/);
+    return m?{tipo:tc(m[2]),codigo:m[3],nome:tc(m[4]),qtd:m[5],un:m[6]}:null}).filter(Boolean);
+  const logr=g(/Logradouro:\s*(.+?)\s+N[º°]:/,s3).replace(/^(\S+)\s+\1\b/i,'$1'), nn=g(/N[º°]:\s*(\S+)/,s3), comp=g(/Complemento:\s*(.+?)\s+Bairro:/,s3), bairro=g(/Bairro:\s*(.+)/,s3);
+  return {
+    numero:g(/N[º°]\s*(CFT\d+)/), substitui:g(/SUBSTITUI[ÇC][ÃA]O ao\s*(CFT\d+)/i),
+    tipo:g(/TRT\s+(OBRA[^\n]*?)\s*(?:\n|N[º°])/)||'OBRA / SERVIÇO',
+    contratante:g(/Contratante:\s*(.+?)\s+CPF\/CNPJ/), valor:g(/Valor:\s*(R\$\s*[\d.,]+)/), celebrado:g(/Celebrado em:\s*(\S+)/),
+    endereco:[logr&&(logr+(nn?', '+nn:'')),[comp,bairro].filter(Boolean).join(', ')].filter(Boolean).join(' – '),
+    cidade:g(/Cidade:\s*(.+?)\s+UF:/,s3), uf:g(/UF:\s*(\S+)/,s3),
+    inicio:g(/Data de In[ií]cio:\s*(\S+)/,s3), termino:g(/Previs[ãa]o de t[ée]rmino:\s*(\S+)/,s3), finalidade:g(/Finalidade:\s*(.+)/,s3),
+    atividades, obs:s5.replace(/^[^\n]*\n/,'').replace(/\s+/g,' ').replace(/ \? /g,' – ').trim(),
+    registrada:g(/Registrada em:\s*(\S+)/), isento:/isento de taxa/i.test(raw), chave:g(/chave:\s*([A-Z0-9]{4,8})/),
+    pdf:'pdfs/'+nomeArq };
+}
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+async function lerPdf(buf){
+  const pdf=await pdfjsLib.getDocument({data:buf}).promise,L=[];
+  for(let p=1;p<=pdf.numPages;p++){const tc=await(await pdf.getPage(p)).getTextContent(),m={};
+    tc.items.forEach(it=>{const y=Math.round(it.transform[5]/3);(m[y]=m[y]||[]).push(it)});
+    Object.keys(m).sort((a,b)=>b-a).forEach(y=>L.push(m[y].sort((a,b)=>a.transform[4]-b.transform[4]).map(i=>i.str).join(' ').replace(/\s+/g,' ').trim()))}
+  return L.join('\n')}
+
+// ============ 3) PÁGINA ============
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const dt=s=>{const m=(s||'').match(/(\d+)\/(\d+)\/(\d+)/);return m?+m[3]*1e4+m[2]*100+ +m[1]:0};
+let extras=[]; try{extras=JSON.parse(localStorage.getItem('trt_extras')||'[]')}catch(_){}
+const previews={}; // numero -> object URL (PDFs lidos nesta sessão)
+$('nome').textContent=PERFIL.nome; $('cursos').textContent=PERFIL.cursos;
+
+function lista(){
+  const fixos=new Set(TRTS.map(t=>t.numero));
+  return [...TRTS.map(t=>({...t})),...extras.filter(t=>!fixos.has(t.numero)).map(t=>({...t,_extra:1}))];
+}
+function render(){
+  const q=$('q').value.toLowerCase(),ft=$('ft').value;
+  const l=lista().filter(t=>(!ft||t.atividades.some(a=>a.tipo===ft))&&(!q||JSON.stringify(t).toLowerCase().includes(q)))
+    .sort((a,b)=>dt(b.registrada)-dt(a.registrada));
+  $('cnt').textContent=l.length+' TRT'+(l.length===1?'':'s');
+  $('grid').innerHTML=l.length?l.map(cardHtml).join(''):'<div class="vazio">Nenhum TRT encontrado.</div>';
+  l.forEach(t=>miniatura(t));
+}
+function cardHtml(t){
+  const url=previews[t.numero]||t.pdf, tipos=[...new Set(t.atividades.map(a=>a.tipo))];
+  return `<article class="card" id="c-${t.numero}">
+  <a class="prev" href="${esc(url)}" target="_blank" rel="noopener"><span class="badge">${esc(t.numero)}</span><div class="ph"><b>PDF</b>Abrir TRT</div></a>
+  <div class="body">
+    <h3>${esc(t.finalidade||'Obra')} · ${esc(t.cidade)}${t.uf?'/'+esc(t.uf):''}</h3>
+    <p class="loc">${esc(t.endereco)}</p>
+    <div class="chips">${t.registrada?`<span class="chip s">Registrada ${esc(t.registrada)}</span>`:''}
+      ${t.substitui?`<span class="chip">Substitui ${esc(t.substitui)}</span>`:''}${t.isento?'<span class="chip">Isento de taxa</span>':''}
+      ${tipos.map(x=>`<span class="chip ${x==='Projeto'?'p':''}">${esc(x)}</span>`).join('')}</div>
+    <dl><dt>Contratante</dt><dd>${esc(t.contratante)}</dd>
+      <dt>Período</dt><dd>${esc(t.inicio)} a ${esc(t.termino)}</dd>
+      ${t.valor?`<dt>Valor</dt><dd>${esc(t.valor)}</dd>`:''}</dl>
+    <div class="chips">${t.atividades.map(a=>`<span class="chip" title="#${esc(a.codigo)}">${esc(a.nome)} · ${esc(a.qtd)} ${esc(a.un)}</span>`).join('')}</div>
+    <div class="obs" onclick="this.classList.toggle('open')">${esc(t.obs)}</div>
+    <div class="acts"><a class="pri" href="${esc(url)}" target="_blank" rel="noopener">Abrir PDF</a>
+      ${t.chave?`<a href="https://corporativo.sinceti.net.br/publico/" target="_blank" rel="noopener" title="Chave ${esc(t.chave)}">Verificar</a>`:''}
+      ${t._extra?`<button onclick="remover('${esc(t.numero)}')">Remover</button>`:''}</div>
+  </div></article>`;
+}
+async function miniatura(t){
+  const box=document.querySelector(`#c-${t.numero} .prev`); if(!box)return;
+  try{const pdf=await pdfjsLib.getDocument(previews[t.numero]||t.pdf).promise,pg=await pdf.getPage(1),
+      vp=pg.getViewport({scale:1.2}),cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;
+    await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+    box.querySelector('.ph').replaceWith(cv)}catch(_){/* sem pré-visualização: mantém o ícone */}
+}
+function remover(n){extras=extras.filter(t=>t.numero!==n);localStorage.setItem('trt_extras',JSON.stringify(extras));render()}
+$('q').oninput=render;$('ft').onchange=render;
+
+$('f').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{const t=parseTRT(await lerPdf(await f.arrayBuffer()),f.name);
+    if(!t.numero)throw new Error('não encontrei o número do TRT');
+    previews[t.numero]=URL.createObjectURL(f);
+    extras=extras.filter(x=>x.numero!==t.numero).concat(t);localStorage.setItem('trt_extras',JSON.stringify(extras));
+    $('gen').hidden=false;
+    $('genInfo').innerHTML=`TRT <b>${esc(t.numero)}</b> lido. Para deixá-lo fixo: salve este PDF em <b>pdfs/${esc(f.name)}</b> e cole o objeto abaixo dentro da lista <b>TRTS</b> do código (antes do <code>];</code>).`;
+    $('code').value=JSON.stringify(t,null,2)+',';render();
+  }catch(err){alert('Não consegui ler esse PDF como TRT: '+err.message)}
+  e.target.value='';
+};
+$('copiar').onclick=()=>{$('code').select();navigator.clipboard?.writeText($('code').value)};
+render();
+</script>
+</body>
+</html>
