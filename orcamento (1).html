@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PO - Planilha Orçamentária</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--az:#1f4e79;--cl:#dce6f1;--bd:#8aa0b8}
+*{box-sizing:border-box}
+body{margin:0;font:12px/1.35 Arial,Helvetica,sans-serif;background:#e9edf2;color:#111}
+.tools,.sheet{max-width:1200px;margin:10px auto;background:#fff;border:1px solid var(--bd)}
+.tools{padding:10px}.tools h3{margin:0 0 6px;color:var(--az);font-size:13px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0}
+.row input[type=text]{flex:1;min-width:160px}
+input{font:inherit;padding:3px 5px;border:1px solid #bcc7d4;background:#fff;width:100%}
+button,.btn{font:inherit;padding:5px 10px;border:1px solid var(--bd);background:#f4f7fb;cursor:pointer;width:auto;display:inline-block}
+button:hover,.btn:hover{background:var(--cl)}.pri{background:var(--az);color:#fff}
+.hint{color:#555;font-size:11px}
+.scroll{max-height:220px;overflow:auto;border:1px solid #ddd}
+.top{display:flex;justify-content:space-between;background:var(--az);color:#fff;padding:6px 10px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);border-left:1px solid var(--bd)}
+.grid label{border:1px solid var(--bd);border-left:0;border-top:0;padding:3px 6px;font-size:10px;color:#444;text-transform:uppercase}
+.grid input{border:0;padding:2px 0;font-size:12px;text-transform:none;color:#000}
+.w2{grid-column:span 2}.w4{grid-column:span 4}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid var(--bd);padding:3px 5px;vertical-align:top}
+th{background:var(--cl);font-size:11px}
+td input{border:0;padding:0;background:transparent}
+td.n{text-align:right;white-space:nowrap}td.n input{text-align:right;width:80px}
+tr.g1 td{background:#b8cce4;font-weight:700}tr.g2 td{background:#e8eef6;font-weight:700}
+.tg{display:flex;justify-content:flex-end;padding:6px 10px;font-weight:700;font-size:14px;color:var(--az)}
+.foot{display:grid;grid-template-columns:1fr 1fr}
+.foot label{border:1px solid var(--bd);padding:4px 6px;font-size:10px;color:#444;text-transform:uppercase}
+.foot input{border:0;padding:2px 0;font-size:12px;text-transform:none}
+@page{size:A4 landscape;margin:8mm}
+@media print{body{background:#fff}.tools,.no-print{display:none!important}.sheet{border:0;margin:0;max-width:none}
+th,.top,tr.g1 td,tr.g2 td{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<div class="tools">
+  <h3>Importar / Base de preços</h3>
+  <div class="row">
+    <label class="btn pri">Importar PDF (PO)<input id="fPdf" type="file" accept="application/pdf" hidden></label>
+    <label class="btn">Importar SINAPI (.xlsx/.csv)<input id="fSin" type="file" accept=".xlsx,.xls,.csv" hidden></label>
+    <label class="btn">Abrir JSON<input id="fJson" type="file" accept=".json" hidden></label>
+    <button id="bSalvar">Salvar JSON</button><button id="bCsv">Exportar CSV</button>
+    <button id="bPrint" class="pri">Imprimir / PDF</button><button id="bLimpar">Limpar</button>
+    <span id="info" class="hint"></span>
+  </div>
+  <div class="row"><input type="text" id="busca" placeholder="Buscar na base SINAPI (código ou descrição)..."><span id="binfo" class="hint"></span></div>
+  <p class="hint" style="margin:2px 0">A base inicial é só de exemplo; importe a planilha oficial da Caixa para códigos e preços reais.</p>
+  <div class="scroll"><table id="tBase"><tbody></tbody></table></div>
+  <div class="row"><button id="aG1">+ Grupo (1.)</button><button id="aG2">+ Subgrupo (1.1.)</button><button id="aI">+ Item manual</button></div>
+</div>
+
+<div class="sheet">
+  <div class="top"><span>PO - PLANILHA ORÇAMENTÁRIA</span><span>Orçamento Base para Licitação - OGU #PUBLICO</span></div>
+  <div class="grid">
+    <label>Nº TransfereGOV<input id="transf"></label><label class="w2">Proponente / Tomador<input id="prop"></label><label>Data base<input id="dbase"></label>
+    <label class="w2">Descrição do lote<input id="lote"></label><label>BDI 1 (%)<input id="bdi" type="number" step="0.01" value="25"></label><label>Recurso<input id="recurso"></label>
+    <label>Nº Operação<input id="oper"></label><label class="w2">Apelido do empreendimento<input id="apel"></label><label>Localidade SINAPI / Município / UF<input id="local"></label>
+  </div>
+  <table id="tOrc"><thead><tr><th>Item</th><th>Fonte</th><th>Código</th><th>Descrição</th><th>Unid.</th><th>Quantidade</th><th>Custo unitário (sem BDI) (R$)</th><th>BDI (%)</th><th>Preço unitário (com BDI) (R$)</th><th>Preço total (R$)</th><th class="no-print"></th></tr></thead><tbody></tbody></table>
+  <div class="tg">PREÇO TOTAL: <span id="tg" style="margin-left:8px"></span></div>
+  <div class="foot">
+    <label>Encargos sociais<input id="enc"></label><label>Observações<input id="obs"></label>
+    <label>Responsável técnico (nome)<input id="resp"></label><label>CREA/CAU<input id="crea"></label>
+    <label>ART/RRT<input id="art"></label><label>Local e data<input id="dataDoc"></label>
+  </div>
+  <p class="hint" style="padding:4px 8px">Siglas: RA - rateio proporcional entre Repasse e Contrapartida. Arredondamento de duas casas decimais em quantidade, custo, BDI, preço unitário e preço total.</p>
+  <li><a href="https://drive.google.com/file/d/1jjv54sDI5EsFNrdW_tJLAy71YTlC0cwJ/view?usp=sharing" target="_blank" rel="noopener">Orçamento em PDF</a></li>
+      
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const F=['transf','prop','dbase','lote','bdi','recurso','oper','apel','local','enc','obs','resp','crea','art','dataDoc'];
+const r2=x=>Math.round((x+Number.EPSILON)*100)/100;
+const brl=x=>(x||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const num=s=>{if(typeof s==='number')return s;s=String(s).replace(/[^\d,.-]/g,'');if(s.includes(','))s=s.replace(/\./g,'').replace(',','.');return parseFloat(s)||0};
+const esc=s=>String(s??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+let rows=[];
+let base=[{c:'EX-001',d:'Escavação manual de vala',u:'M',p:35},{c:'EX-002',d:'Concreto ciclópico',u:'M3',p:450},{c:'EX-003',d:'Alvenaria bloco cerâmico (mat.+M.O.)',u:'M2',p:58.08},{c:'EX-004',d:'Chapisco',u:'M2',p:12},{c:'EX-005',d:'Reboco',u:'M2',p:35},{c:'EX-006',d:'Piso cerâmico assentado',u:'M2',p:92}];
+
+// ---------- cálculo ----------
+function calc(){
+  const b=num($('bdi').value);let c=[0,0,0],glv=0,tot=0;
+  rows.forEach(r=>{
+    if(r.t==='g'){glv=r.lv;c[r.lv-1]++;for(let k=r.lv;k<3;k++)c[k]=0;r.n=c.slice(0,r.lv).join('.')+'.';r.tot=0}
+    else{const lv=glv+1;c[lv-1]++;for(let k=lv;k<3;k++)c[k]=0;r.n=c.slice(0,lv).join('.')+'.';
+      r.p=r2(r.k*(1+b/100));r.tot=r2(r.q*r.p);tot+=r.tot}
+  });
+  rows.forEach((g,i)=>{if(g.t!=='g')return;for(let j=i+1;j<rows.length&&!(rows[j].t==='g'&&rows[j].lv<=g.lv);j++)if(rows[j].t==='i')g.tot+=rows[j].tot;g.tot=r2(g.tot)});
+  return r2(tot);
+}
+function paint(){const t=calc();
+  document.querySelectorAll('[data-t]').forEach(e=>{const r=rows[e.dataset.t];e.textContent=brl(r.tot)});
+  document.querySelectorAll('[data-p]').forEach(e=>e.textContent=brl(rows[e.dataset.p].p));
+  $('tg').textContent='R$ '+brl(t);localStorage.setItem('po_auto',JSON.stringify(dump()))}
+function render(){calc();const b=num($('bdi').value);
+  $('tOrc').tBodies[0].innerHTML=rows.map((r,i)=>r.t==='g'
+   ?`<tr class="g${r.lv}"><td>${r.n}</td><td><input data-i="${i}" data-k="f" value="${esc(r.f)}"></td><td></td><td><input data-i="${i}" data-k="d" value="${esc(r.d)}"></td><td>-</td><td class="n">-</td><td class="n">-</td><td>BDI 1</td><td class="n">-</td><td class="n" data-t="${i}"></td><td class="no-print"><button data-del="${i}">✕</button></td></tr>`
+   :`<tr><td>${r.n}</td><td><input data-i="${i}" data-k="f" value="${esc(r.f)}"></td><td><input data-i="${i}" data-k="c" value="${esc(r.c)}"></td><td><input data-i="${i}" data-k="d" value="${esc(r.d)}"></td><td><input data-i="${i}" data-k="u" value="${esc(r.u)}" size="3"></td><td class="n"><input data-i="${i}" data-k="q" type="number" step="any" value="${r.q}"></td><td class="n"><input data-i="${i}" data-k="k" type="number" step="any" value="${r.k}"></td><td>BDI 1</td><td class="n" data-p="${i}"></td><td class="n" data-t="${i}"></td><td class="no-print"><button data-del="${i}">✕</button></td></tr>`).join('');
+  paint()}
+$('tOrc').oninput=e=>{const {i,k}=e.target.dataset;if(i===undefined)return;rows[i][k]=['q','k'].includes(k)?num(e.target.value):e.target.value;paint()};
+$('tOrc').onclick=e=>{const i=e.target.dataset.del;if(i!==undefined){rows.splice(i,1);render()}};
+$('bdi').oninput=paint;
+$('aG1').onclick=()=>{rows.push({t:'g',lv:1,f:'SINAPI',d:'NOVO GRUPO'});render()};
+$('aG2').onclick=()=>{rows.push({t:'g',lv:2,f:'SINAPI',d:'NOVO SUBGRUPO'});render()};
+$('aI').onclick=()=>{rows.push({t:'i',f:'SINAPI',c:'',d:'Novo item',u:'UN',q:1,k:0});render()};
+$('bLimpar').onclick=()=>{if(confirm('Limpar a planilha?')){rows=[];render()}};
+$('bPrint').onclick=()=>window.print();
+
+// ---------- base SINAPI ----------
+function renderBase(){const q=$('busca').value.toLowerCase();
+  $('tBase').tBodies[0].innerHTML=base.filter(b=>!q||b.c.toLowerCase().includes(q)||b.d.toLowerCase().includes(q)).slice(0,150)
+   .map(b=>`<tr><td>${esc(b.c)}</td><td>${esc(b.d)}</td><td>${esc(b.u)}</td><td class="n">${brl(b.p)}</td><td><button data-a="${base.indexOf(b)}">Adicionar</button></td></tr>`).join('');
+  $('binfo').textContent=base.length+' itens na base'}
+$('busca').oninput=renderBase;
+$('tBase').onclick=e=>{const i=e.target.dataset.a;if(i===undefined)return;const b=base[i];
+  rows.push({t:'i',f:b.c.startsWith('EX')?'PRÓPRIA':'SINAPI',c:b.c,d:b.d.toUpperCase(),u:b.u,q:1,k:b.p});render()};
+$('fSin').onchange=async e=>{const f=e.target.files[0];if(!f)return;
+  const wb=XLSX.read(await f.arrayBuffer(),{type:'array'}),nv=[];
+  wb.SheetNames.forEach(n=>XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:''}).forEach(r=>{
+    const c=r.map(x=>String(x).trim()).filter(Boolean),ci=c.findIndex(x=>/^\d{3,7}$/.test(x));if(ci<0)return;
+    const t=c.slice(ci+1),d=t.find(x=>x.length>8&&isNaN(num(x))),u=t.find(x=>x.length<=6&&/^[A-Za-z²³\/]+$/.test(x)),
+      p=t.map(x=>x.replace(/\s/g,'')).find(x=>/^\d+([.,]\d+)?$/.test(x)&&/[.,]\d{2}$/.test(x));
+    if(d&&u&&p)nv.push({c:c[ci],d,u:u.toUpperCase(),p:num(p)})}));
+  if(nv.length){base=nv;$('busca').value='';renderBase()}else alert('Não reconheci itens nessa planilha.');e.target.value=''};
+
+// ---------- leitura do PDF (modelo PO / TransfereGOV) ----------
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+async function lerLinhas(buf){const pdf=await pdfjsLib.getDocument({data:buf}).promise,L=[];
+  for(let p=1;p<=pdf.numPages;p++){const tc=await(await pdf.getPage(p)).getTextContent(),m={};
+    tc.items.forEach(it=>{const y=Math.round(it.transform[5]/3);(m[y]=m[y]||[]).push(it)});
+    Object.keys(m).sort((a,b)=>b-a).forEach(y=>L.push(m[y].sort((a,b)=>a.transform[4]-b.transform[4]).map(i=>i.str).join(' ').replace(/\s+/g,' ').trim()))}
+  return L}
+const FONTE='(SINAPI-I|SINAPI|SICRO|SEINFRA|ORSE|SBC|PR[ÓO]PRIA|COTA[ÇC][ÃA]O)';
+function parsePO(L){
+  const raw=L.join('\n'),flat=L.join(' ').replace(/\s+/g,' '),m=(re)=>{const x=raw.match(re);return x?x.slice(1).map(s=>s.trim()):[]};
+  const meta={};
+  [meta.transf]=m(/TransfereGOV[^\n]*\n(\d+)\s/);[meta.prop]=m(/PROPONENTE \/ TOMADOR[^\n]*\n(?:\d+\s+)?([^\n]+)/);
+  const lt=m(/^(\d{2}-\d{2}(?:\s*\([^)]*\))?)\s+(.+?)\s+(\d+,\d{2})%/m);if(lt.length){meta.dbase=lt[0];meta.lote=lt[1];meta.bdi=String(num(lt[2]))}
+  [meta.local]=m(/\n([^\n]+)\s*\nLOCALIDADE SINAPI/);[meta.recurso]=[];
+  const ap=m(/APELIDO DO EMPREENDIMENTO\s*\n(\d+)\s+([^\n]+)/);if(ap.length){meta.oper=ap[0];meta.apel=ap[1]}
+  [meta.resp]=m(/Nome:\s*([^\n]+)/);[meta.crea]=m(/CREA\/CAU:\s*([^\n]+)/);[meta.art]=m(/Data ART\/RRT:\s*([^\n]+)/);
+  [meta.dataDoc]=m(/(\S+-feira, \d+ de \S+ de \d{4})/i);
+  const ob=m(/(Para elaboração[^\n]*)\n(Foi considerado[^\n]*)/);if(ob.length){meta.enc='SINAPI (UF indicada)';meta.obs=ob.join(' ')}
+  const out=[];
+  flat.split(new RegExp('(?<![\\d.])(?=\\d+(?:\\.\\d+)*\\.\\s+'+FONTE+'\\b)')).forEach(ch=>{
+    const h=ch.match(new RegExp('^(\\d+(?:\\.\\d+)*)\\.\\s+'+FONTE+'\\s+(.*)$'));if(!h)return;
+    const lv=h[1].split('.').length,rest=h[3];
+    let g=rest.match(/^(.*?)\s+-\s+-\s+BDI\s*\d\s+-\s+[\d.]+,\d{2}\s*RA/);
+    if(g){out.push({t:'g',lv:Math.min(lv,3),f:h[2],d:g[1].trim()});return}
+    const x=rest.match(/^(?:(\d{2,7})\s+)?(.*?)\s+(\S{1,4})\s+([\d.]+,\d{2})\s+([\d.]+,\d{2})\s+BDI\s*\d\s+[\d.]+,\d{2}\s+[\d.]+,\d{2}\s*RA/);
+    if(x)out.push({t:'i',f:h[2],c:x[1]||'',d:x[2].trim(),u:x[3],q:num(x[4]),k:num(x[5])})});
+  return {meta,rows:out}}
+// leitura genérica (PDFs fora do modelo PO): linhas com valores em R$
+function parseGenerico(L){let sec='Importado',out=[{t:'g',lv:1,f:'PRÓPRIA',d:sec.toUpperCase()}];
+  L.forEach(l=>{const d=[...l.matchAll(/R\$\s*([\d.]+,\d{2})/g)];
+    if(!d.length){if(l&&!/^\d/.test(l)&&l.length<80&&!/^(TOTAL|BDI|ORÇAMENTISTA|CFT)/i.test(l)){sec=l.replace(/\s+(Quantidade|Estimativa|Critério|Valor)\b.*$/i,'').trim();if(sec)out.push({t:'g',lv:2,f:'PRÓPRIA',d:sec.toUpperCase()})}return}
+    if(/^(\d+\s+)?(TOTAL|BDI)/i.test(l))return;
+    const ds=l.replace(/^\d+\s+/,'').replace(/\(?R\$\s*[\d.]+,\d{2}\)?/g,'').replace(/\s[~≈]?[\d.,]+\s*(m²|m³|m|un\.?|kg|verba|conjunto|serviço|dias?)?(\s.*)?$/i,'').trim();
+    if(ds)out.push({t:'i',f:'PRÓPRIA',c:'',d:ds.toUpperCase(),u:'VB',q:1,k:num(d[d.length-1][1])})});
+  return {meta:{},rows:out}}
+$('fPdf').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('info').textContent='Lendo PDF...';
+  try{const L=await lerLinhas(await f.arrayBuffer());let r=parsePO(L),modelo='modelo PO';
+    if(!r.rows.some(x=>x.t==='i')){r=parseGenerico(L);modelo='leitura genérica (BDI será somado aos valores)'}
+    rows=r.rows;Object.entries(r.meta).forEach(([k,v])=>{if(v)$(k).value=v});render();
+    $('info').textContent=rows.filter(x=>x.t==='i').length+' itens importados ('+modelo+'). Confira os totais.'}
+  catch(err){$('info').textContent='Erro ao ler o PDF: '+err.message}e.target.value=''};
+
+// ---------- salvar / abrir / CSV ----------
+const dump=()=>({rows,...Object.fromEntries(F.map(k=>[k,$(k).value]))});
+function load(d){rows=d.rows||[];F.forEach(k=>{if(d[k]!==undefined)$(k).value=d[k]});render()}
+function baixar(n,t,m){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:m}));a.download=n;a.click()}
+$('bSalvar').onclick=()=>baixar(($('apel').value||'planilha')+'.json',JSON.stringify(dump(),null,1),'application/json');
+$('fJson').onchange=async e=>{const f=e.target.files[0];if(f)load(JSON.parse(await f.text()));e.target.value=''};
+$('bCsv').onclick=()=>{calc();const b=num($('bdi').value),l=['Item;Fonte;Código;Descrição;Unid.;Quantidade;Custo unit. (sem BDI);BDI (%);Preço unit. (com BDI);Preço total'];
+  rows.forEach(r=>l.push(r.t==='g'?[r.n,r.f,'',r.d,'','','','',,r.tot.toFixed(2)].join(';'):[r.n,r.f,r.c,r.d,r.u,r.q,r.k,b,r.p.toFixed(2),r.tot.toFixed(2)].map(x=>String(x).replace(/;/g,',')).join(';')));
+  baixar('planilha.csv','\ufeff'+l.join('\n'),'text/csv')};
+
+try{const s=localStorage.getItem('po_auto');if(s)load(JSON.parse(s));else render()}catch(_){render()}
+renderBase();
+</script>
+</body>
+</html>
