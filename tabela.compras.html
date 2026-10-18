@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Steel Incorporações</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, sans-serif;
+    background:#f3f3f3;
+    padding:20px;
+    color:#333;
+}
+
+.container{
+    max-width:1400px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 0 15px rgba(0,0,0,0.1);
+}
+
+.topo{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.topo h1{
+    color:#0d6efd;
+    font-size:36px;
+}
+
+.topo p{
+    margin-top:8px;
+    font-size:16px;
+}
+
+.categoria{
+    margin-top:40px;
+}
+
+.categoria h2{
+    background:#0d6efd;
+    color:white;
+    padding:12px;
+    border-radius:8px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+}
+
+th{
+    background:#0d6efd;
+    color:white;
+    padding:12px;
+    border:1px solid #ddd;
+}
+
+td{
+    border:1px solid #ddd;
+    padding:8px;
+    text-align:center;
+    background:white;
+}
+
+input{
+    width:100%;
+    border:none;
+    padding:8px;
+    text-align:center;
+    font-size:14px;
+}
+
+input:focus{
+    outline:2px solid #0d6efd;
+}
+
+.preview-foto{
+    width:70px;
+    height:70px;
+    border:2px dashed #999;
+    border-radius:8px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:auto;
+    background:#fafafa;
+}
+
+.preview-foto img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.btn{
+    margin-top:15px;
+    padding:10px 20px;
+    background:#198754;
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:15px;
+}
+
+.btn:hover{
+    background:#157347;
+}
+
+.rodape{
+    margin-top:40px;
+    text-align:right;
+    font-size:15px;
+}
+
+@media(max-width:900px){
+
+    table{
+        font-size:12px;
+    }
+
+    .topo h1{
+        font-size:28px;
+    }
+
+}
+
+@media print {
+
+    input[type="file"]{
+        display:none;
+    }
+
+    .btn{
+        display:none;
+    }
+
+}
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.perfil {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #fff;
+  border: 1px solid #d9dee5;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+.av {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #1f5fbf;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.perfil h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  color: #17212b;
+}
+
+.perfil .sub {
+  margin-top: 4px;
+  font-size: .95rem;
+  color: #5a6675;
+}
+
+/* celular */
+@media (max-width: 700px) {
+  .perfil {
+    flex-direction: column;
+    text-align: center;
+    padding: 16px;
+  }
+  .perfil h1 { font-size: 1.25rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- TOPO -->
+    
+
+        <div class="wrap">
+  <div class="perfil"><div class="av">JR</div>
+    <div><h1 id="nome">José Robson da Silva</h1><div class="sub" id="cursos">Curso Técnico em Edificações · Engenharia Civil</div></div></div>
+
+        
+
+    <!-- BOTÃO CALCULAR -->
+    <button class="btn" onclick="calcular()">
+        Calcular Totais
+    </button>
+
+    
+
+    <!-- HIDRÁULICA -->
+    <div class="categoria">
+
+        <h2>Hidráulica</h2>
+
+        <table id="tabelaHidraulica">
+
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Foto</th>
+                    <th>Nome</th>
+                    <th>Unidade</th>
+                    <th>Quantidade</th>
+                    <th>Valor Unitário</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>1</td>
+
+                    <td>
+                        <div class="preview-foto" id="preview3">
+                            Foto
+                        </div>
+
+                        <input type="file"
+                        onchange="carregarFoto(event,'preview3')">
+                    </td>
+
+                    <td>
+                        <input value="Tubo 20mm">
+                    </td>
+
+                    <td>
+                        <input value="Barra">
+                    </td>
+
+                    <td>
+                        <input class="quantidade" value="6">
+                    </td>
+
+                    <td>
+                        <input class="valorUnitario" value="35">
+                    </td>
+
+                    <td>
+                        <input class="resultado" readonly>
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>2</td>
+
+                    <td>
+                        <div class="preview-foto" id="preview4">
+                            Foto
+                        </div>
+
+                        <input type="file"
+                        onchange="carregarFoto(event,'preview4')">
+                    </td>
+
+                    <td>
+                        <input value="Joelho 20mm">
+                    </td>
+
+                    <td>
+                        <input value="Unidade">
+                    </td>
+
+                    <td>
+                        <input class="quantidade" value="12">
+                    </td>
+
+                    <td>
+                        <input class="valorUnitario" value="5">
+                    </td>
+
+                    <td>
+                        <input class="resultado" readonly>
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+        <button class="btn"
+        onclick="adicionarLinha('tabelaHidraulica')">
+
+            Adicionar Linha Hidráulica
+
+        </button>
+
+    </div>
+    <div style="margin-top:30px; text-align:right;">
+
+    <h2>
+        TOTAL GERAL:
+        <span id="totalGeral">R$ 0,00</span>
+    </h2>
+
+</div>
+
+    <!-- RODAPÉ -->
+    <div class="rodape">
+
+        <p>
+            <strong>Data:</strong>
+            <span id="dataAtual"></span>
+        </p>
+
+        <p>
+            <strong>Cidade:</strong>
+            Extremoz/RN
+        </p>
+
+    </div>
+
+</div>
+
+<script>
+
+// CONTADOR
+let contador = 5;
+
+
+// DATA AUTOMÁTICA
+const hoje = new Date();
+
+document.getElementById("dataAtual").innerHTML =
+hoje.toLocaleDateString('pt-BR');
+
+
+// CALCULAR
+function calcular(){
+
+    const linhas =
+    document.querySelectorAll("tbody tr");
+
+    linhas.forEach(function(linha){
+
+        let quantidade = Number(
+            linha.querySelector(".quantidade").value
+        );
+
+        let valorUnitario = Number(
+            linha.querySelector(".valorUnitario").value
+        );
+
+        let total = quantidade * valorUnitario;
+
+        linha.querySelector(".resultado").value =
+        "R$ " + total.toFixed(2);
+
+    });
+    
+
+}
+document.addEventListener("change", function(){
+
+    salvarDados();
+});
+
+// CARREGAR FOTO
+function carregarFoto(event,id){
+
+    const preview =
+    document.getElementById(id);
+
+    const arquivo =
+    event.target.files[0];
+
+    if(arquivo){
+
+        const reader =
+        new FileReader();
+
+        reader.onload = function(e){
+
+            preview.innerHTML = `
+                <img src="${e.target.result}">
+            `;
+
+        }
+
+        reader.readAsDataURL(arquivo);
+
+    }
+
+}
+
+
+// ADICIONAR LINHA
+function adicionarLinha(idTabela){
+
+    const tabela =
+    document.querySelector(`#${idTabela} tbody`);
+
+    const numeroLinha =
+    tabela.rows.length + 1;
+
+    const linha =
+    document.createElement("tr");
+
+    linha.innerHTML = `
+
+        <td>${numeroLinha}</td>
+
+        <td>
+
+            <div class="preview-foto"
+            id="preview${contador}">
+
+                Foto
+
+            </div>
+
+            <input type="file"
+            onchange="carregarFoto(event,'preview${contador}')">
+
+        </td>
+
+        <td>
+            <input placeholder="Nome do item">
+        </td>
+
+        <td>
+            <input placeholder="Unidade">
+        </td>
+
+        <td>
+            <input class="quantidade" value="0">
+        </td>
+
+        <td>
+            <input class="valorUnitario" value="0">
+        </td>
+
+        <td>
+            <input class="resultado" readonly>
+        </td>
+
+    `;
+
+    tabela.appendChild(linha);
+
+    contador++;
+
+}
+
+
+</script>
+
+<script>
+
+function calcular(){
+
+    const linhas =
+    document.querySelectorAll("tbody tr");
+
+    let somaGeral = 0;
+
+    linhas.forEach(function(linha){
+
+        let quantidade = Number(
+            linha.querySelector(".quantidade").value
+        );
+
+        let valorUnitario = Number(
+            linha.querySelector(".valorUnitario").value
+        );
+
+        let total = quantidade * valorUnitario;
+
+        // MOSTRA TOTAL DA LINHA
+        linha.querySelector(".resultado").value =
+        "R$ " + total.toFixed(2);
+
+        // SOMA NO TOTAL GERAL
+        somaGeral += total;
+
+    });
+
+    // MOSTRA TOTAL GERAL
+    document.getElementById("totalGeral").innerHTML =
+    "R$ " + somaGeral.toFixed(2);
+
+}
+
+</script>
+
+</body>
+</html>
