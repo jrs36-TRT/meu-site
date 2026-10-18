@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calculadora Elétrica Residencial – NBR 5410</title>
+<style>
+:root{color-scheme:light dark;--bg:#eef1f4;--cd:#fff;--tx:#17212b;--mu:#5a6675;--bd:#cfd6df;--hd:#26313d;--hx:#fff;--ac:#1f5fbf;--ok:#17724a;--wn:#a85a00;--er:#b3261e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11161c;--cd:#1a212a;--tx:#e6ebf1;--mu:#9aa6b5;--bd:#303b48;--hd:#0b0f14;--hx:#e6ebf1;--ac:#7fb0ff;--ok:#4cc38a;--wn:#f0a64e;--er:#f4796f}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#11161c;--cd:#1a212a;--tx:#e6ebf1;--mu:#9aa6b5;--bd:#303b48;--hd:#0b0f14;--hx:#e6ebf1;--ac:#7fb0ff;--ok:#4cc38a;--wn:#f0a64e;--er:#f4796f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;font-variant-numeric:tabular-nums}
+main{max-width:1180px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;margin:0 0 2px}h2{font-size:1.05rem;margin:0 0 10px}
+.sub{color:var(--mu);margin:0 0 16px}
+section{background:var(--cd);border:1px solid var(--bd);border-radius:6px;padding:14px;margin-bottom:14px}
+.w{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:640px}
+th{background:var(--hd);color:var(--hx);text-align:left;font-weight:600;font-size:.82rem;padding:6px 8px;white-space:nowrap}
+td{border-bottom:1px solid var(--bd);padding:4px 6px;font-size:.9rem}
+input,select{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:4px;padding:4px 6px;width:100%;min-width:60px}
+input[type=checkbox]{width:auto;min-width:0}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:10px}
+.row label{display:flex;flex-direction:column;font-size:.82rem;color:var(--mu);gap:2px}
+.row input,.row select{width:130px}
+button{font:inherit;cursor:pointer;border:1px solid var(--ac);background:var(--ac);color:var(--bg);border-radius:4px;padding:6px 12px}
+button.g{background:transparent;color:var(--ac)}
+button.x{background:transparent;border-color:transparent;color:var(--er);padding:2px 8px}
+.sum{font-weight:600;margin:8px 0 0}
+.ok{color:var(--ok)}.wn{color:var(--wn)}.er{color:var(--er)}
+.al{margin:6px 0 0;padding:0;list-style:none}.al li{padding:6px 10px;border-left:4px solid var(--wn);background:var(--bg);margin-bottom:6px;font-size:.9rem}
+.al li.e{border-color:var(--er)}.al li.k{border-color:var(--ok)}
+.nm{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.nm div{border:1px solid var(--bd);border-radius:6px;padding:10px;font-size:.88rem}
+.nm b{display:block;margin-bottom:4px}
+small{color:var(--mu)}
+@media print{body{background:#fff;color:#000}button,.np{display:none}section{break-inside:avoid}}
+.grade {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.card {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+}
+.card iframe {
+  width: 100%;
+  height: 500px;
+  border: 0;
+}
+@media (max-width: 700px) {
+  .grade { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Calculadora elétrica residencial</h1>
+<p class="sub">Dimensionamento de iluminação, tomadas, condutores, disjuntores, DR e eletrodutos conforme NBR 5410 e NBR 6150.</p>
+
+<section>
+<h2>Dados da instalação</h2>
+<div class="row">
+<label>Obra<input id="obra" value="Matilde Ville – Casa 34 m²"></label>
+<label>Concessionária<input id="conc" value="Enel / Eletropaulo"></label>
+<label>Fases do ramal<select id="nf"><option value="2">1 – monofásico (127 V)</option><option value="1">2 – bifásico (127/220 V)</option><option value="3">3 – trifásico (127/220 V)</option></select></label>
+<label>Fator de demanda<input id="fd" type="number" step="0.01" min="0.1" max="1" value="0.88"></label>
+<label>Queda de tensão máx. (%)<input id="lim" type="number" step="0.5" value="4"></label>
+</div>
+<small>O fator de demanda deve seguir a tabela da concessionária. A queda de tensão usa ρ = 0,0225 Ω·mm²/m (cobre a 70 °C, valor conservador).</small>
+</section>
+
+<section>
+<h2>Cômodos: iluminação e tomadas</h2>
+<div class="w"><table>
+<thead><tr><th>Cômodo</th><th>Tipo</th><th>Área (m²)</th><th>Perímetro (m)</th><th>Iluminação mín. (VA)</th><th>Nº de tomadas</th><th>Tomadas (VA)</th><th></th></tr></thead>
+<tbody id="rb"></tbody></table></div>
+<p class="sum" id="rt"></p>
+<div class="row np" style="margin-top:10px"><button class="g" onclick="rooms.push({n:'Novo cômodo',t:'seca',a:8,p:11});rR();calc()">Adicionar cômodo</button></div>
+</section>
+
+<section>
+<h2>Quadro de cargas</h2>
+<div class="row np">
+<button onclick="sug();rC();calc()">Sugerir circuitos a partir dos cômodos</button>
+<button class="g" onclick="cir.push(mk('Novo circuito','tue',1000,false,127,15,3));rC();calc()">Adicionar circuito</button>
+</div>
+<div class="w"><table style="min-width:900px">
+<thead><tr><th>Descrição</th><th>Tipo</th><th>Potência (VA)</th><th>Tensão (V)</th><th>Fase</th><th>Comp. (m)</th><th>Agrup.</th><th>Área molhada</th><th></th></tr></thead>
+<tbody id="cb"></tbody></table></div>
+<h2 style="margin-top:16px">Circuitos dimensionados</h2>
+<div class="w"><table style="min-width:760px">
+<thead><tr><th>Circuito</th><th>Ib (A)</th><th>Seção (mm²)</th><th>Disjuntor (A)</th><th>Iz corrigida (A)</th><th>Queda (%)</th><th>DR</th></tr></thead>
+<tbody id="rs"></tbody></table></div>
+</section>
+
+<section>
+<h2>Eletrodutos de PVC rígido (NBR 6150)</h2>
+<div class="w"><table>
+<thead><tr><th>Eletroduto</th><th>Circuitos</th><th>Condutores</th><th>Ocupação (mm²)</th><th>Máx. 40% (mm²)</th><th>Taxa</th></tr></thead>
+<tbody id="ed"></tbody></table></div>
+<small>Áreas internas aproximadas; confirme no catálogo do fabricante. Circuitos com agrupamento 1 vão em eletroduto próprio; os demais dividem um eletroduto comum. Cada circuito conta fase, neutro e terra.</small>
+</section>
+
+<section>
+<h2>Ramal de entrada e corrente por fase</h2>
+<div class="w"><table>
+<thead><tr><th>Fases / tensão</th><th>Instalada (kW)</th><th>Demandada (kW)</th><th>Fase A (A)</th><th>Fase B (A)</th><th>Fase C (A)</th><th>Disjuntor geral (A)</th><th>Condutor fase / neutro / terra (mm²)</th></tr></thead>
+<tbody><tr id="en"></tr></tbody></table></div>
+</section>
+
+<section>
+<h2>Alertas</h2>
+<ul class="al" id="al"></ul>
+</section>
+
+<section>
+<h2>Critérios usados</h2>
+<div class="nm">
+<div><b>NBR 5410: iluminação (9.5.1.2)</b>Pelo menos um ponto de luz no teto por cômodo. Carga mínima: 100 VA até 6 m², mais 60 VA para cada 4 m² inteiros adicionais.</div>
+<div><b>NBR 5410: tomadas (9.5.2.2.1)</b>Até 6 m²: 1 tomada. Acima: 1 por 5 m de perímetro. Cozinha, copa e serviço: 1 por 3,5 m. Banheiro: 1 junto ao lavatório. Potência: 600 VA nas 3 primeiras de cozinha, serviço e banheiro, 100 VA nas demais; 100 VA nos outros cômodos.</div>
+<div><b>NBR 5410: proteção contra choques</b>Circuitos de banheiro, cozinha, área de serviço e áreas externas com DR de alta sensibilidade (30 mA). Condutor de proteção (terra) em todos os circuitos.</div>
+<div><b>NBR 6150: eletrodutos de PVC rígido</b>Taxa de ocupação máxima de 40% da área interna para 3 ou mais condutores. Seções mínimas: 1,5 mm² (iluminação) e 2,5 mm² (tomadas e uso específico).</div>
+<div><b>Condutores</b>Cobre, isolação PVC 70 °C, método B1, 2 condutores carregados. Fatores de agrupamento: 1 → 1,00, 2 → 0,80, 3 → 0,70, 4 → 0,65, 5 → 0,60, 6 → 0,57. Regra: Ib ≤ In ≤ Iz.</div>
+</div>
+<small>Confira a numeração dos itens na sua edição da norma. Esta ferramenta auxilia o cálculo e não substitui o projeto assinado por profissional habilitado.</small>
+<div class="row np" style="margin-top:10px"><button onclick="window.print()">Imprimir / salvar em PDF</button></div>
+</section>
+</main>
+<div class="grade">
+  <div class="card">
+    <h3>CFT2403808166</h3>
+    <iframe src="LAECIO PLANTA ELETRICA.pdf"></iframe>
+    <a href="LAECIO PLANTA ELETRICA.pdf" target="_blank">Abrir PDF</a>
+  </div>
+<script>
+const $=id=>document.getElementById(id);
+const S=[1.5,2.5,4,6,10,16,25,35],
+IZ={1.5:17.5,2.5:24,4:32,6:41,10:57,16:76,25:101,35:125},
+AC={1.5:7.1,2.5:10.7,4:13.9,6:18,10:31,16:45,25:65,35:87},
+FA=[1,1,.8,.7,.65,.6,.57],
+DJ=[10,16,20,25,32,40,50,63,70,80,100],
+ED=[['20 mm (1/2")',227],['25 mm (3/4")',380],['32 mm (1")',616],['40 mm (1 1/4")',962],['50 mm (1 1/2")',1590],['60 mm (2")',2290]],
+TR=[['seca','Seca (sala, quarto)'],['coz','Cozinha / copa / serviço'],['ban','Banheiro'],['ext','Varanda / garagem']],
+KT=[['il','Iluminação'],['tug','Tomadas (TUG)'],['tue','Uso específico (TUE)']];
+let rooms=[{n:'Sala',t:'seca',a:12,p:14},{n:'Quarto',t:'seca',a:9,p:12},{n:'Cozinha',t:'coz',a:6,p:10},{n:'Banheiro',t:'ban',a:3.5,p:7.5}];
+let cir=[];
+const opt=(a,v)=>a.map(([k,l])=>`<option value="${k}"${k==v?' selected':''}>${l}</option>`).join('');
+const mk=(d,k,va,w,v,l,g)=>({d,k,va,w,v,l,g,f:'A'});
+const phs=()=>['A','B','C'].slice(+$('nf').value);
+
+function rc(r){
+ const a=+r.a||0,p=+r.p||0;
+ const il=a<=6?100:100+60*Math.floor((a-6)/4);
+ let n;
+ if(r.t=='coz')n=Math.max(1,Math.ceil(p/3.5));
+ else if(r.t=='ban'||r.t=='ext')n=1;
+ else n=a<=6?1:Math.ceil(p/5);
+ const w=r.t=='coz'||r.t=='ban';
+ const va=w?Math.min(n,3)*600+Math.max(0,n-3)*100:n*100;
+ return{il,n,va};
+}
+function rR(){
+ $('rb').innerHTML=rooms.map((r,i)=>`<tr><td><input data-r="${i}" data-k="n" value="${r.n}"></td><td><select data-r="${i}" data-k="t">${opt(TR,r.t)}</select></td><td><input type="number" step="0.1" min="0" data-r="${i}" data-k="a" value="${r.a}"></td><td><input type="number" step="0.1" min="0" data-r="${i}" data-k="p" value="${r.p}"></td><td id="ri${i}"></td><td id="rn${i}"></td><td id="rv${i}"></td><td><button class="x" aria-label="Remover cômodo" onclick="rooms.splice(${i},1);rR();calc()">✕</button></td></tr>`).join('');
+}
+function rC(){
+ const P=phs();
+ $('cb').innerHTML=cir.map((c,i)=>{
+  if(!P.includes(c.f))c.f='A';if(P.length==1)c.v=127;
+  return `<tr><td><input data-c="${i}" data-k="d" value="${c.d}"></td><td><select data-c="${i}" data-k="k">${opt(KT,c.k)}</select></td><td><input type="number" min="0" data-c="${i}" data-k="va" value="${c.va}"></td><td><select data-c="${i}" data-k="v">${opt(P.length>1?[[127,'127'],[220,'220']]:[[127,'127']],c.v)}</select></td><td><select data-c="${i}" data-k="f">${opt(P.map(x=>[x,x]),c.f)}</select></td><td><input type="number" min="1" data-c="${i}" data-k="l" value="${c.l}"></td><td><input type="number" min="1" max="9" data-c="${i}" data-k="g" value="${c.g}"></td><td><input type="checkbox" data-c="${i}" data-k="w"${c.w?' checked':''}></td><td><button class="x" aria-label="Remover circuito" onclick="cir.splice(${i},1);rC();calc()">✕</button></td></tr>`;
+ }).join('');
+}
+function bal(){
+ const P=phs(),n=P.length,L=P.map(()=>0);
+ if(n==1)cir.forEach(c=>c.v=127);
+ [...cir].sort((a,b)=>b.va/b.v-a.va/a.v).forEach(c=>{
+  const I=c.va/c.v;
+  if(+c.v==220&&n>1){let b=0,m=1e9;for(let k=0;k<n;k++){const s=L[k]+L[(k+1)%n];if(s<m){m=s;b=k}}c.f=P[b];L[b]+=I;L[(b+1)%n]+=I}
+  else{const b=L.indexOf(Math.min(...L));c.f=P[b];L[b]+=I}
+ });
+}
+function sug(){
+ const by=(ts)=>rooms.filter(r=>ts.includes(r.t)).reduce((s,r)=>s+rc(r).va,0);
+ const il=rooms.filter(r=>r.t!='ban').reduce((s,r)=>s+rc(r).il,0);
+ const ban=rooms.filter(r=>r.t=='ban').reduce((s,r)=>s+rc(r).il+rc(r).va,0);
+ cir=[mk('Iluminação','il',il,false,127,15,3),
+  mk('Tomadas gerais (áreas secas)','tug',by(['seca','ext']),false,127,15,3),
+  mk('Tomadas da cozinha / serviço','tug',by(['coz']),true,127,12,3),
+  mk('Banheiro (lâmpada + tomada)','tug',ban,true,127,10,3),
+  mk('Chuveiro','tue',3500,true,127,8,1)].filter(c=>c.va>0);
+ bal();
+}
+const f2=x=>x.toFixed(2).replace('.',',');
+const TL={2:'2F+N · 220 V',1:'1F+N · 127 V',3:'3F+N · 320 V'};
+
+function calc(){
+ let TI=0,TT=0;
+ rooms.forEach((r,i)=>{const q=rc(r);$('ri'+i).textContent=q.il;$('rn'+i).textContent=q.n;$('rv'+i).textContent=q.va;TI+=q.il;TT+=q.va});
+ $('rt').textContent=`Iluminação mínima: ${TI} VA · Tomadas: ${TT} VA`;
+ const lim=+$('lim').value||4,fd=+$('fd').value||1,P=phs(),ph={A:0,B:0,C:0},al=[];
+ let Pi=0,pool=0,poolC=[],rs='',eds='';
+ cir.forEach((c,i)=>{
+  const v=+c.v,va=+c.va||0,L=+c.l||1,g=Math.min(Math.max(+c.g||1,1),6),Ib=va/v,fa=FA[g];
+  const min=c.k=='il'?1.5:2.5,In=DJ.find(x=>x>=Ib);
+  const dv=s=>200*.0225*L*Ib/(s*v);
+  let j=S.findIndex(x=>x>=min);
+  while(In&&j<S.length-1&&(IZ[S[j]]*fa<In||dv(S[j])>lim))j++;
+  const s=S[j],iz=IZ[s]*fa,d=dv(s),ok=In&&iz>=In&&d<=lim;
+  rs+=`<tr><td>${i+1} – ${c.d}</td><td>${f2(Ib)}</td><td class="${ok?'':'er'}">${s}</td><td>${In||'—'}</td><td>${f2(iz)}</td><td class="${d>lim?'er':''}">${f2(d)}</td><td>${c.w?'30 mA':'—'}</td></tr>`;
+  if(!In)al.push(['e',`Circuito ${i+1} (${c.d}): corrente de ${f2(Ib)} A acima do disjuntor máximo da tabela. Divida a carga em mais circuitos.`]);
+  else if(!ok)al.push(['e',`Circuito ${i+1} (${c.d}): nem a maior seção da tabela atende corrente ou queda de tensão. Reduza o comprimento ou divida o circuito.`]);
+  if(c.k=='tue'&&c.w&&!c.w)al.push(['e','']);
+  if(!c.w&&/banheiro|cozinha|serviço|chuveiro|externa/i.test(c.d))al.push(['',`Circuito ${i+1} (${c.d}) parece estar em área molhada, mas está sem DR de 30 mA. Marque “Área molhada”.`]);
+  Pi+=va;
+  const k=P.indexOf(c.f),k2=(k+1)%P.length;
+  ph[c.f]+=Ib;if(v==220)ph[P[k2]]+=Ib;
+  const ar=3*AC[s];
+  if(g==1){const e=ED.find(x=>x[1]*.4>=ar)||ED[ED.length-1];eds+=`<tr><td>${e[0]}</td><td>${i+1}</td><td>3</td><td>${Math.round(ar)}</td><td>${f2(e[1]*.4)}</td><td>${Math.round(ar/e[1]*100)}%</td></tr>`}
+  else{pool+=ar;poolC.push(i+1)}
+ });
+ if(poolC.length){const e=ED.find(x=>x[1]*.4>=pool)||ED[ED.length-1],ok=e[1]*.4>=pool;
+  eds=`<tr><td>${e[0]}</td><td>${poolC.join(', ')}</td><td>${poolC.length*3}</td><td>${Math.round(pool)}</td><td>${f2(e[1]*.4)}</td><td class="${ok?'':'er'}">${Math.round(pool/e[1]*100)}%</td></tr>`+eds;
+  if(!ok)al.push(['e','Eletroduto comum acima de 40% na maior bitola. Separe circuitos em mais de um eletroduto.'])}
+ $('rs').innerHTML=rs;$('ed').innerHTML=eds;
+ const Im=Math.max(...P.map(x=>ph[x]*fd),0),Ig=DJ.find(x=>x>=Im),sc=S.find(x=>IZ[x]>=(Ig||0));
+ const pe=sc&&sc<=16?sc:sc?sc/2:'—';
+ $('en').innerHTML=`<td>${TL[P.length]}</td><td>${f2(Pi/1000)}</td><td>${f2(Pi*fd/1000)}</td>`+['A','B','C'].map(x=>`<td>${P.includes(x)?f2(ph[x]*fd):'--'}</td>`).join('')+`<td>${Ig||'—'}${Ig&&P.length>1?' ('+(P.length==2?'bipolar':'tripolar')+')':''}</td><td>${sc?`${P.length}F+N: ${sc} / ${sc} / ${pe}`:'—'}</td>`;
+ if(!Ig||!sc)al.push(['e','Corrente de entrada acima da tabela. Consulte a concessionária para o padrão de entrada.']);
+ const mx=Math.max(...P.map(x=>ph[x])),mn=Math.min(...P.map(x=>ph[x]));
+ if(P.length>1&&mx>0&&(mx-mn)/mx>.2)al.push(['','Fases desequilibradas (diferença acima de 20%). Redistribua os circuitos.']);
+ const a2=al.filter(x=>x[1]);
+ $('al').innerHTML=a2.length?a2.map(([t,m])=>`<li class="${t}">${m}</li>`).join(''):'<li class="k">Nenhum alerta com os dados atuais.</li>';
+}
+document.addEventListener('input',e=>{
+ const t=e.target,k=t.dataset.k;if(!k)return;
+ const num=['a','p','va','l','g'],val=t.type=='checkbox'?t.checked:num.includes(k)?+t.value:(k=='v'?+t.value:t.value);
+ if(t.dataset.r!=null)rooms[t.dataset.r][k]=val;else if(t.dataset.c!=null)cir[t.dataset.c][k]=val;
+ calc();
+});
+document.addEventListener('change',e=>{if(e.target.id=='nf'){bal();rC();calc()}else if(e.target.id=='fd'||e.target.id=='lim')calc()});
+$('fd').addEventListener('input',calc);$('lim').addEventListener('input',calc);
+rR();sug();rC();calc();
+
+
+</script>
+</body>
+</html>
