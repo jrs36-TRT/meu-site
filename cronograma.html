@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cronograma de Obra</title>
+<style>
+  :root{
+    --bg:#f0f0f0; --card:#fff; --ink:#222; --line:#ddd; --head:#2b2b2b;
+    --bar:#2ecc40; --chart:#9cc9ea;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:16px;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+  .page{max-width:900px;margin:0 auto}
+  .topo{background:var(--card);border-radius:8px;padding:14px 18px;margin-bottom:12px;text-align:center;line-height:1.55}
+  .topo .nome{font-size:20px;font-weight:700}
+  .topo div{font-size:14px}
+  .barra{background:var(--card);border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;font-size:14px}
+  input{font:inherit;border:1px solid #ccc;border-radius:3px;padding:3px 4px;background:#fff}
+  input[type=number]{width:64px;text-align:center}
+  button{font:inherit;font-size:13px;border:1px solid #bbb;background:#fff;border-radius:4px;padding:5px 10px;cursor:pointer}
+  button:hover{background:#eee}
+  button:focus-visible,input:focus-visible{outline:2px solid #1a73e8;outline-offset:1px}
+  .ml{margin-left:auto;display:flex;gap:8px}
+  .tabela{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;background:var(--card);font-size:14px;min-width:620px}
+  th{background:var(--head);color:#fff;padding:7px;font-size:13px}
+  td{border:1px solid var(--line);padding:3px 6px;text-align:center}
+  td.serv{text-align:center}
+  td.serv input{width:100%;text-align:center;border-color:transparent;background:transparent}
+  td.serv input:hover,td.serv input:focus{border-color:#ccc;background:#fff}
+  td.fim{width:70px}
+  td.vis{width:30%;text-align:left}
+  .b{height:12px;background:var(--bar);border-radius:2px;min-width:2px}
+  td.x{width:34px;border:none;background:transparent}
+  td.x button{padding:2px 7px;color:#b00}
+  .total{font-size:17px;font-weight:700;margin:14px 0 10px}
+  .grafico{background:var(--card);border:1px solid var(--line);padding:10px 6px 4px}
+  .grafico svg{width:100%;height:auto;display:block}
+  .resp{background:var(--card);border-radius:8px;margin-top:16px;padding:12px;text-align:center;font-size:13px;line-height:1.5}
+  @media print{
+    body{background:#fff;padding:0}
+    .barra .ml,.x,#novo{display:none}
+    input{border-color:transparent!important;background:transparent!important}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- CABEÇALHO (edite os textos diretamente aqui no HTML) -->
+  <header class="topo">
+    <div class="nome">José Robson da Silva</div>
+    <div>Técnico em Edificações</div>
+    <div>CFT: 09600253404</div>
+    <div>Cidade: Extremoz/RN</div>
+    <div>Tel: 84 99625-9024</div>
+  </header>
+
+  <div class="barra">
+    <label>Funcionários: <input type="number" id="func" min="1" value="1"></label>
+    <div class="ml">
+      <button id="novo" type="button">+ Serviço</button>
+      <button type="button" onclick="window.print()">Imprimir / PDF</button>
+    </div>
+  </div>
+
+  <div class="tabela">
+    <table>
+      <thead>
+        <tr><th>Serviço</th><th>Dias</th><th>Início</th><th>Fim</th><th>Visual</th><th style="background:transparent"></th></tr>
+      </thead>
+      <tbody id="corpo"></tbody>
+    </table>
+  </div>
+
+  <div class="total" id="total"></div>
+
+  <div class="grafico" id="grafico"></div>
+
+  <footer class="resp">
+    <strong>RESPONSÁVEL</strong><br>
+    JOSE ROBSON DA SILVA<br>
+    CFT: 09600253404
+  </footer>
+</div>
+
+<script>
+  // ===== DADOS (edite aqui: [serviço, dias, início]) =====
+  const dados = [
+    ["Muro lateral esquerdo",2,1],
+    ["Lateral direito",2,4],
+    ["Muro frontal",4,7],
+    ["Muro posterior",1,12],
+    ["Casa de lixo",3,14],
+    ["Poste padrão",1,16],
+    ["Hidrometro",1,16],
+    ["Fossa",2,18],
+    ["Caixa gordura",2,21],
+    ["Fundação",4,1],
+    ["Alvenaria",8,6],
+    ["Laje",4,15],
+    ["Empena",3,20],
+    ["Impermeabilização",1,16],
+    ["Caixa porta",1,24],
+    ["Reboco interno",4,26],
+    ["Telhado",3,16],
+    ["Reboco externo",5,31],
+    ["Calçada contorno",2,24],
+    ["Contrapiso",1,37],
+    ["Calçada externa",2,27],
+    ["Cerâmica",4,43],
+    ["Pintura",5,48],
+    ["Gesso",3,39],
+    ["Elétrica",4,43],
+    ["Hidro",3,43],
+    ["Portas e portões",2,43]
+  ].map(([nome,dias,inicio])=>({nome,dias,inicio}));
+
+  const corpo = document.getElementById("corpo");
+
+  const fmt = n => Number(n).toFixed(1);
+  const fim = s => s.inicio + s.dias; // fim = início + dias
+
+  function montarTabela(){
+    corpo.innerHTML = "";
+    dados.forEach((s,i)=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="serv"><input type="text" value="${s.nome.replace(/"/g,"&quot;")}" data-i="${i}" data-c="nome" aria-label="Serviço"></td>
+        <td><input type="number" min="0" value="${s.dias}" data-i="${i}" data-c="dias" aria-label="Dias"></td>
+        <td><input type="number" min="0" value="${s.inicio}" data-i="${i}" data-c="inicio" aria-label="Início"></td>
+        <td class="fim" id="fim${i}"></td>
+        <td class="vis"><div class="b" id="b${i}"></div></td>
+        <td class="x"><button type="button" data-del="${i}" title="Remover serviço" aria-label="Remover serviço">×</button></td>`;
+      corpo.appendChild(tr);
+    });
+    atualizar();
+  }
+
+  function atualizar(){
+    dados.forEach((s,i)=>{
+      document.getElementById("fim"+i).textContent = fmt(fim(s));
+      document.getElementById("b"+i).style.width = Math.max(s.dias,0)*7.5 + "px";
+    });
+    const total = dados.reduce((m,s)=>Math.max(m,fim(s)),0);
+    document.getElementById("total").textContent = "Total da obra: " + fmt(total) + " dias";
+    desenharGrafico();
+  }
+
+  function desenharGrafico(){
+    const W=860,H=330,L=36,R=8,T=26,B=110;
+    const pw=W-L-R, ph=H-T-B;
+    const max = Math.max(8, ...dados.map(s=>s.dias));
+    const n = dados.length || 1;
+    const passo = pw/n, larg = passo*0.8;
+    let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Dias por serviço">`;
+    g += `<rect x="${W/2-45}" y="4" width="28" height="12" fill="#9cc9ea"/><text x="${W/2-12}" y="14" font-size="11" fill="#555">Dias por serviço</text>`;
+    for(let v=0; v<=max; v++){
+      const y = T+ph-(v/max)*ph;
+      g += `<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#ddd"/>`;
+      g += `<text x="${L-6}" y="${y+4}" font-size="10" fill="#666" text-anchor="end">${v}</text>`;
+    }
+    dados.forEach((s,i)=>{
+      const x = L + i*passo + (passo-larg)/2;
+      const h = (s.dias/max)*ph;
+      const y = T+ph-h;
+      g += `<rect x="${x}" y="${y}" width="${larg}" height="${h}" fill="#9cc9ea"/>`;
+      const cx = L + i*passo + passo/2;
+      g += `<text transform="translate(${cx+3},${T+ph+10}) rotate(-45)" font-size="10" fill="#555" text-anchor="end">${s.nome.replace(/&/g,"&amp;").replace(/</g,"&lt;")}</text>`;
+    });
+    g += `</svg>`;
+    document.getElementById("grafico").innerHTML = g;
+  }
+
+  corpo.addEventListener("input", e=>{
+    const el = e.target, i = el.dataset.i, c = el.dataset.c;
+    if(i===undefined) return;
+    dados[i][c] = c==="nome" ? el.value : (parseFloat(el.value)||0);
+    atualizar();
+  });
+
+  corpo.addEventListener("click", e=>{
+    const i = e.target.dataset.del;
+    if(i===undefined) return;
+    dados.splice(+i,1);
+    montarTabela();
+  });
+
+  document.getElementById("novo").addEventListener("click", ()=>{
+    const ult = dados.length ? fim(dados[dados.length-1]) : 1;
+    dados.push({nome:"Novo serviço",dias:1,inicio:ult});
+    montarTabela();
+  });
+
+  montarTabela();
+</script>
+</body>
+</html>
