@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>curso de revit</title>
+<style>
+:root{--bg:#f1f4f2;--cd:#fff;--tx:#18241f;--mu:#1fe122;--bd:#d3dcd7;--pr:#374151;--pt:#fff;--ac:#c8892b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+
+
+/* menu simples */
+.menu{background:var(--pr);color:var(--pt)}
+.menu .wrap{display:flex;align-items:center;justify-content:space-between;min-height:56px;position:relative}
+.menu strong{font-size:1.1rem}
+.menu nav{display:flex;gap:4px}
+.menu nav a{color:inherit;text-decoration:none;padding:8px 12px;border-radius:6px}
+.menu nav a:hover{background:rgba(255,255,255,.18)}
+#mb{display:none;background:none;border:1px solid #fff;color:#fff;border-radius:6px;font-size:1.2rem;padding:4px 10px;cursor:pointer}
+@media (max-width:700px){
+  #mb{display:block}
+  .menu nav{display:none;position:absolute;left:0;right:0;top:100%;flex-direction:column;background:var(--pr);padding:8px 16px 14px}
+  .menu nav.aberto{display:flex}
+}
+
+h1{font-size:1.8rem;margin:28px 0 16px}
+
+/* cards: 3 no PC, 1 no celular */
+
+@media (max-width:700px){.grade{grid-template-columns:1fr}}
+
+.corpo{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.corpo h2{margin:0;font-size:1.3rem}
+.corpo p{margin:0;color:var(--mu);font-size:.95rem}
+.btn{margin-top:auto;display:inline-block;text-align:center;text-decoration:none;background:var(--pr);color:var(--pt);padding:9px 14px;border-radius:6px}
+.btn:hover{filter:brightness(1.15)}
+
+
+
+.card iframe {
+  width: 100%;
+  height: 90vh;
+  min-height: 900px;
+  border: none;
+  display: block;
+  zoom: 1.2;
+}
+
+.card {
+  width: 100%;
+  max-width: 100%;
+  overflow: visible;
+}
+img {
+  width: 100%;
+  height: 500px;
+  border: 0;
+}
+@media (max-width: 700px) {
+  .grade { grid-template-columns: 1fr; }
+}
+</style>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f4f6f8;
+  }
+ 
+  main { flex: 1; padding: 24px; }
+ 
+  .rodape {
+    background: #1f2a37;
+    color: #e5e7eb;
+    padding: 28px 20px 16px;
+    border-top: 4px solid #f59e0b;
+  }
+ 
+  .rodape-conteudo {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
+ 
+  .rodape h3 {
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+ 
+  .rodape p { font-size: .85rem; color: #9ca3af; }
+ 
+  .contatos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    list-style: none;
+  }
+ 
+  .contatos a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: #2d3a4b;
+    color: #fff;
+    text-decoration: none;
+    font-size: .9rem;
+    transition: background .2s, transform .2s;
+  }
+ 
+  .contatos a:hover { background: #f59e0b; color: #1f2a37; transform: translateY(-2px); }
+ 
+  .copy {
+    max-width: 1000px;
+    margin: 18px auto 0;
+    padding-top: 12px;
+    border-top: 1px solid #374151;
+    text-align: center;
+    font-size: .78rem;
+    color: #9ca3af;
+  }
+ 
+  @media (max-width: 600px) {
+    .rodape-conteudo { flex-direction: column; text-align: center; }
+    .contatos { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<header class="menu">
+  <div class="wrap">
+    <strong>Curso de Revit</strong>
+    <button id="mb" aria-label="Abrir menu" aria-expanded="false">☰</button>
+    <nav id="nav">
+      <a href="#cidades">Revit</a>
+      <a href="#contato">Contato</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="cidades">
+ <div class="grade">
+
+  <div class="card">
+    <h3>CURSO DE REVIT | PRIMEIRO PROJETO À PRANCHA</h3>
+    <iframe src="Curso_Revit_Casa_Popular.pdf"></iframe>
+    <a href="Curso_Revit_Casa_Popular.pdf" target="_blank">Abrir PDF</a>
+  </div>
+
+  
+  
+
+  
+  
+</div>
+</main>
+
+<footer class="rodape">
+  <div class="rodape-conteudo">
+    <div>
+      <h3>ROBSON SILVA</h3>
+      <p>Entre em contato</p>
+    </div>
+ 
+    <ul class="contatos">
+      <li>
+        <a href="https://wa.me/5584996259024" target="_blank" rel="noopener">
+          📱 WhatsApp: 84 9 96259024
+        </a>
+      </li>
+      <li>
+        <a href="mailto:joserobson20007@gmail.com">
+          ✉️ JOSEROBSON20007@GMAIL.COM
+        </a>
+      </li>
+    </ul>
+  </div>
+ 
+  <div class="copy">
+    © <span id="ano"></span> ROBSON SILVA. Todos os direitos reservados.
+  </div>
+</footer>
+
+<script>
+const mb=document.getElementById('mb'),nav=document.getElementById('nav');
+mb.addEventListener('click',()=>{
+  const aberto=nav.classList.toggle('aberto');
+  mb.setAttribute('aria-expanded',aberto);
+});
+nav.addEventListener('click',e=>{
+  if(e.target.tagName==='A'){nav.classList.remove('aberto');mb.setAttribute('aria-expanded',false)}
+});
+</script>
+</body>
+</html>
