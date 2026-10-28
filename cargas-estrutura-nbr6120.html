@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cargas da estrutura – NBR 6120</title>
+<style>
+  :root{
+    --bg:#eaf0f4; --card:#fff; --ink:#12263a; --mut:#5b6b7a; --line:#d3dde5;
+    --navy:#12263a; --steel:#2b6f8f; --yel:#f2b705; --soft:#eef2f5; --blue:#dcebf3; --res:#fff3c4;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Roboto,Arial,sans-serif;line-height:1.45}
+  .topo{background:var(--navy);color:#fff;border-bottom:5px solid var(--yel);padding:16px 20px}
+  .topo-in{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center;justify-content:space-between}
+  .nome{font-size:22px;font-weight:700;letter-spacing:.2px}
+  .cargo{font-size:14px;color:#b9c8d3}
+  #titulo{background:transparent;border:1px solid transparent;color:#fff;font:inherit;font-size:17px;font-weight:600;padding:4px 8px;border-radius:5px;min-width:260px;max-width:100%}
+  #titulo:hover,#titulo:focus{border-color:#6f8aa0;background:#1b3750}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px 14px 30px}
+  .barra{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  button{font:inherit;font-size:13px;padding:7px 12px;border:1px solid #9fb0bd;background:#fff;color:var(--ink);border-radius:5px;cursor:pointer}
+  button:hover{background:var(--soft)}
+  button:focus-visible,input:focus-visible,[data-id]:focus-visible{outline:3px solid #f0a46f;outline-offset:2px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-bottom:16px}
+  h2{font-size:17px;margin:0 0 12px;padding-bottom:7px;border-bottom:2px solid var(--navy)}
+  .sub{color:var(--mut);font-size:13px;margin:-6px 0 12px}
+  /* esquema */
+  .esq{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:18px;align-items:center}
+  @media(max-width:800px){.esq{grid-template-columns:1fr}}
+  svg text{font-family:inherit}
+  .tag{cursor:pointer}
+  .tag circle{fill:var(--yel);stroke:var(--navy);stroke-width:1}
+  .tag text{font-weight:700;fill:var(--navy);text-anchor:middle}
+  .tag:hover circle{fill:#ffd24a}
+  .elo{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;width:100%;text-align:left;margin:0 0 14px;padding:7px 12px;border:1px solid var(--line);background:var(--soft);border-radius:7px;position:relative}
+  .elo:last-child{margin-bottom:0}
+  .elo:not(:last-child)::after{content:"";position:absolute;left:50%;bottom:-11px;border:6px solid transparent;border-top:8px solid var(--steel);border-bottom:0}
+  .elo .c{width:30px;height:30px;border-radius:50%;background:var(--yel);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+  .elo b{display:block;font-size:14px}
+  .elo small{color:var(--mut);font-size:12px}
+  .elo .v{font-weight:700;font-size:13px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .elo.fun{background:#fff4ec;border-color:#e9c8ad}
+  /* dados */
+  .campos{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:12px}
+  fieldset{border:1px solid var(--line);border-radius:7px;margin:0;padding:8px 12px 10px}
+  legend{font-weight:700;font-size:13px;color:var(--steel);padding:0 6px}
+  fieldset label{display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--mut);margin-top:6px}
+  input[type=text]{font:inherit;font-size:14px;padding:6px 8px;border:1px solid #b8c6d1;border-radius:5px;width:100%;background:#fff;color:var(--ink)}
+  label.chk{flex-direction:row!important;align-items:center;gap:8px!important;color:var(--ink)!important;font-size:13px!important}
+  .extras{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+  .extras th,.extras td{padding:4px 8px;border-bottom:1px solid var(--line);text-align:left}
+  .extras input{width:90px}
+  /* tabela */
+  .rolagem{overflow-x:auto}
+  table.t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:700px}
+  table.t th{background:var(--navy);color:#fff;text-align:left;padding:7px 8px;font-size:12.5px}
+  table.t td{padding:5px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  td.n,th.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+  td.f{color:var(--mut);font-size:12.5px}
+  tr.grupo td{background:var(--steel);color:#fff;font-weight:700;padding:7px 8px;scroll-margin-top:10px}
+  tr.grupo .tg{display:inline-flex;min-width:26px;height:22px;padding:0 6px;border-radius:11px;background:var(--yel);color:var(--navy);align-items:center;justify-content:center;font-size:12px;margin-right:8px}
+  tr.sub td{background:var(--blue);font-weight:700}
+  tr.res td{background:var(--res);font-weight:700}
+  .p-g{color:#1f6f8b}.p-q{color:#b86a00;font-weight:600}
+  @keyframes pisca{from{filter:brightness(1.5)}to{filter:none}}
+  tr.flash td{animation:pisca 1.2s ease-out}
+  @media(prefers-reduced-motion:reduce){tr.flash td{animation:none}}
+  /* graficos */
+  .graf svg{width:100%;height:auto;display:block}
+  .leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;margin:6px 0 4px}
+  .leg i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+  .gt{font-weight:700;font-size:14px;margin:14px 0 2px}
+  .info{font-size:12.5px;color:var(--mut)}
+  footer{text-align:center;font-size:13px;color:var(--mut);padding:6px}
+  footer a{color:var(--navy)}
+  @media print{
+    body{background:#fff}.barra,.noprint{display:none}
+    section{break-inside:avoid-page;border:none;padding:6px 0}
+    #titulo{border:none;color:#000}
+    .topo{background:#fff;color:#000}.cargo{color:#444}
+  }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="topo-in">
+    <div>
+      <div class="nome">José Robson da Silva</div>
+      <div class="cargo">Técnico em Edificações</div>
+    </div>
+    <input id="titulo" class="sv" type="text" value="Cargas da estrutura – sobrado de dois pavimentos" aria-label="Título do trabalho (editável)">
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="barra">
+    <button type="button" onclick="window.print()">Imprimir / salvar PDF</button>
+    <button type="button" id="bCsv">Baixar tabela (CSV)</button>
+    <button type="button" id="bReset">Restaurar valores padrão</button>
+  </div>
+
+  <section>
+    <h2>Caminho das cargas</h2>
+    <p class="sub">Clique em um elemento do esquema ou da lista para ir até a tabela dele. Os valores mudam quando você edita os dados.</p>
+    <div class="esq">
+      <svg viewBox="0 0 380 320" role="img" aria-label="Esquema do sobrado com os elementos numerados">
+        <g transform="translate(-50,-150)">
+          <rect x="126" y="252" width="218" height="70" fill="#e7ddd0" stroke="#d3dde5"/>
+          <rect x="126" y="352" width="218" height="73" fill="#e7ddd0" stroke="#d3dde5"/>
+          <rect x="110" y="252" width="16" height="70" fill="#8a97a3"/><rect x="344" y="252" width="16" height="70" fill="#8a97a3"/>
+          <rect x="110" y="352" width="16" height="73" fill="#8a97a3"/><rect x="344" y="352" width="16" height="73" fill="#8a97a3"/>
+          <rect x="100" y="230" width="270" height="22" fill="#2b6f8f"/><rect x="100" y="222" width="270" height="8" fill="#12263a"/>
+          <rect x="100" y="330" width="270" height="22" fill="#2b6f8f"/><rect x="100" y="322" width="270" height="8" fill="#12263a"/>
+          <rect x="95" y="425" width="280" height="16" fill="#4b5563"/>
+          <polygon points="85,222 235,168 385,222" fill="#d9a36f" stroke="#a8703c"/>
+          <text x="235" y="205" font-size="11" text-anchor="middle" fill="#12263a">telhado</text>
+          <g stroke="#5b6b7a" stroke-width="1.5"><line x1="60" y1="441" x2="410" y2="441"/>
+            <line x1="70" y1="441" x2="62" y2="451"/><line x1="99" y1="441" x2="91" y2="451"/><line x1="128" y1="441" x2="120" y2="451"/><line x1="157" y1="441" x2="149" y2="451"/><line x1="186" y1="441" x2="178" y2="451"/><line x1="215" y1="441" x2="207" y2="451"/><line x1="244" y1="441" x2="236" y2="451"/><line x1="273" y1="441" x2="265" y2="451"/><line x1="302" y1="441" x2="294" y2="451"/><line x1="331" y1="441" x2="323" y2="451"/><line x1="360" y1="441" x2="352" y2="451"/><line x1="389" y1="441" x2="381" y2="451"/></g>
+          <g stroke="#5b6b7a" stroke-width=".8" fill="none">
+            <line x1="235" y1="226" x2="392" y2="216"/><line x1="300" y1="241" x2="392" y2="244"/><line x1="360" y1="288" x2="392" y2="288"/>
+            <line x1="235" y1="326" x2="392" y2="318"/><line x1="300" y1="342" x2="392" y2="346"/><line x1="360" y1="390" x2="392" y2="390"/><line x1="300" y1="433" x2="392" y2="436"/>
+          </g>
+          <g class="tag" data-id="L1" tabindex="0" role="button" aria-label="Laje de cobertura"><circle cx="405" cy="216" r="13"/><text x="405" y="220" font-size="11">1</text></g>
+          <g class="tag" data-id="V2" tabindex="0" role="button" aria-label="Viga de cobertura"><circle cx="405" cy="244" r="13"/><text x="405" y="248" font-size="11">2</text></g>
+          <g class="tag" data-id="P3" tabindex="0" role="button" aria-label="Pilar da cobertura"><circle cx="405" cy="288" r="13"/><text x="405" y="292" font-size="11">3</text></g>
+          <g class="tag" data-id="L11" tabindex="0" role="button" aria-label="Laje de piso"><circle cx="405" cy="318" r="13"/><text x="405" y="322" font-size="9">1.1</text></g>
+          <g class="tag" data-id="V22" tabindex="0" role="button" aria-label="Viga do piso"><circle cx="405" cy="346" r="13"/><text x="405" y="350" font-size="9">2.2</text></g>
+          <g class="tag" data-id="P33" tabindex="0" role="button" aria-label="Pilar do piso"><circle cx="405" cy="390" r="13"/><text x="405" y="394" font-size="9">3.3</text></g>
+          <g class="tag" data-id="B23" tabindex="0" role="button" aria-label="Viga baldrame"><circle cx="405" cy="436" r="13"/><text x="405" y="440" font-size="9">2.3</text></g>
+        </g>
+      </svg>
+      <div id="cadeia"></div>
+    </div>
+  </section>
+
+  <section class="noprint">
+    <h2>Dados (editáveis)</h2>
+    <p class="sub">Altere qualquer valor. Pode usar vírgula ou ponto. Os dados ficam salvos neste navegador para o próximo uso.</p>
+    <div class="campos" id="campos"></div>
+    <h2 style="margin-top:18px">Cargas adicionais por elemento</h2>
+    <p class="sub">Use para somar qualquer outra carga (equipamento, caixa d’água, platibanda etc.). Lajes em kN/m²; os demais em kN.</p>
+    <div class="rolagem"><table class="extras" id="extras"></table></div>
+  </section>
+
+  <section>
+    <h2>Tabela discriminada das cargas</h2>
+    <p class="sub">Permanente (g) é o que fica sempre na estrutura. Acidental (q) é a sobrecarga de uso (NBR 6120).</p>
+    <div class="rolagem">
+      <table class="t">
+        <thead><tr><th>Item</th><th>Tipo</th><th>Cálculo</th><th class="n">Valor</th><th>Unid.</th></tr></thead>
+        <tbody id="tabela"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="graf">
+    <h2>Gráficos dos componentes</h2>
+    <div class="gt">Composição das cargas nas lajes (kN/m²)</div>
+    <div id="gA"></div><div class="leg" id="lA"></div>
+    <div class="gt">Composição da carga em cada componente (kN, característica)</div>
+    <p class="info">Cada barra mostra de onde vem a carga que o elemento recebe. A carga se acumula de cima para baixo até a fundação.</p>
+    <div id="gB"></div><div class="leg" id="lB"></div>
+  </section>
+
+  <p class="info">Valores de referência da ABNT NBR 6120:2019 (pesos específicos, sobrecargas). Confira a norma e a ficha do fabricante antes de usar em projeto. Todo projeto estrutural deve ser conferido e assinado por profissional habilitado.</p>
+
+  <footer>
+    ROBSON SILVA · WhatsApp <a href="https://wa.me/5584996259024">84 9 96259024</a> ·
+    <a href="mailto:JOSEROBSON20007@GMAIL.COM">JOSEROBSON20007@GMAIL.COM</a>
+  </footer>
+</div>
+
+<script>
+/* ===== CONFIGURAÇÃO (valores padrão editáveis aqui ou na página) ===== */
+const CAMPOS = [
+ ['Laje (cobertura e piso)', [['lx','Lado lx (m)',4],['ly','Lado ly (m)',4],['hl','Espessura da laje (cm)',10],['fv','Fração da laje que vai para cada viga',0.25]]],
+ ['Viga (cobertura e piso)', [['vL','Vão (m)',4],['vbw','Largura bw (cm)',14],['vh','Altura h (cm)',40]]],
+ ['Parede', [['wa','Altura (m)',3],['wc','Comprimento (m)',4],['we','Espessura do bloco (cm)',14],['wr','Reboco por face (cm)',2]]],
+ ['Pilar', [['pb','Largura b (cm)',20],['ph','Altura h (cm)',20],['pd','Pé-direito (m)',3],['fp','Fração da viga que desce ao pilar',1]]],
+ ['Viga baldrame', [['bbw','Largura bw (cm)',14],['bh','Altura h (cm)',30]]],
+ ['Cobertura', [['cr','Reboco sob a laje (cm)',2],['cf','Forro (kN/m²)',0.2],['ct','Telha (kN/m²)',0.7],['cm','Madeiramento (kN/m²)',0.15],['ci','Inclinação do telhado (%)',30],['cq','Sobrecarga (kN/m²)',0.5]]],
+ ['Piso', [['rp','Revestimento do piso (cm)',5],['rt','Reboco sob a laje (cm)',2],['qp','Sobrecarga residencial (kN/m²)',1.5]]],
+ ['Materiais e segurança', [['gc','Concreto armado (kN/m³)',25],['ga','Argamassa (kN/m³)',21],['gal','Alvenaria (kN/m³)',13],['gf','Majoração γf',1.4]]]
+];
+const PAREDES = [['w_V2','Parede sobre a viga de cobertura'],['w_V22','Parede sobre a viga do piso'],['w_B23','Parede sobre o baldrame']];
+const META = [
+ ['L1','1','Laje de cobertura','pp + reboco + forro + telhado (+ sobrecarga)'],
+ ['V2','2','Viga de cobertura','pp + parede + fração da laje'],
+ ['P3','3','Pilar da cobertura','viga (1/1) + peso próprio'],
+ ['L11','1.1','Laje de piso','pp + revestimento + carga acidental'],
+ ['V22','2.2','Viga do piso','pp + parede + fração da laje de piso'],
+ ['P33','3.3','Pilar do piso','viga 2.2 + pilar de cima'],
+ ['B23','2.3','Viga baldrame','pp + parede → fundação'],
+ ['FUN','F','Fundação','pilar do piso + baldrame']
+];
+const EXTRAS = ['L1','V2','P3','L11','V22','P33','B23'];
+const KEY = 'cargas-nbr6120-estrutura-v1';
+
+/* ===== utilitários ===== */
+const $ = id => document.getElementById(id);
+const num = id => parseFloat(String($(id).value).replace(',', '.')) || 0;
+const n = (x,d=2) => x.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const nome = id => META.find(m=>m[0]===id);
+
+/* ===== montar formulário ===== */
+$('campos').innerHTML = CAMPOS.map(([g,it]) =>
+  `<fieldset><legend>${g}</legend>` +
+  it.map(([k,l,v]) => `<label><span>${l}</span><input type="text" class="sv" id="in_${k}" data-def="${v}" value="${String(v).replace('.',',')}" inputmode="decimal"></label>`).join('') +
+  `</fieldset>`).join('') +
+  `<fieldset><legend>Paredes consideradas</legend>` +
+  PAREDES.map(([id,l]) => `<label class="chk"><input type="checkbox" class="sv" id="${id}" data-def="1" checked> ${l}</label>`).join('') +
+  `</fieldset>`;
+
+$('extras').innerHTML = `<tr><th>Elemento</th><th>Permanente</th><th>Acidental</th><th>Unid.</th></tr>` +
+  EXTRAS.map(id => { const m = nome(id), u = (id==='L1'||id==='L11') ? 'kN/m²' : 'kN';
+    return `<tr><td>${m[1]} ${m[2]}</td><td><input type="text" class="sv" id="xg_${id}" data-def="0" value="0" inputmode="decimal"></td><td><input type="text" class="sv" id="xq_${id}" data-def="0" value="0" inputmode="decimal"></td><td>${u}</td></tr>`;
+  }).join('');
+
+/* ===== cálculo ===== */
+const C0 = () => ({pp:0,parede:0,lajeG:0,lajeQ:0,extra:0});
+const addC = (a,b,k=1) => { const r={...a}; for(const key in b) r[key]=(r[key]||0)+k*b[key]; return r; };
+const I = (nome,tipo,calc,valor,unid) => ({nome,tipo,calc,valor,unid});
+const S = (nome,calc,valor,unid,cls='sub') => ({nome,calc,valor,unid,sub:cls});
+
+function calcular(){
+  const P = {};
+  CAMPOS.forEach(g => g[1].forEach(([k]) => P[k] = num('in_'+k)));
+  const {gc,ga,gal,gf,fv,fp} = P;
+  const area = P.lx*P.ly;
+  const cos = 1/Math.sqrt(1+(P.ci/100)**2);
+  const X = id => $('xg_'+id) ? ({g:num('xg_'+id), q:num('xq_'+id)}) : ({g:0,q:0});
+  const out = {};
+
+  /* lajes */
+  function laje(id, linhas, q, qNome){
+    const x = X(id), it = [];
+    let g = 0, comps = {pp:0,rev:0,cob:0,extra:0,q:0};
+    linhas.forEach(l => { it.push(I(l.nome,'g',l.calc,l.v,'kN/m²')); g += l.v; comps[l.k] += l.v; });
+    if(x.g){ it.push(I('Carga adicional','g','informado',x.g,'kN/m²')); g += x.g; comps.extra += x.g; }
+    it.push(I(qNome,'q','NBR 6120',q,'kN/m²'));
+    if(x.q) it.push(I('Carga adicional','q','informado',x.q,'kN/m²'));
+    const qt = q + x.q, tot = g + qt, kN = tot*area;
+    comps.q = qt;
+    it.push(S('Permanente g','soma',g,'kN/m²'), S('Acidental q','soma',qt,'kN/m²'),
+      S('Total g + q (serviço)','',tot,'kN/m²','res'),
+      S('Total de cálculo',`${n(gf,1)} × ${n(tot)}`,gf*tot,'kN/m²'),
+      S('Carga total na laje',`${n(tot)} × ${n(area)} m²`,kN,'kN'),
+      S('Parcela para cada viga',`${n(fv,3)} × ${n(kN)}`,fv*kN,'kN','res'));
+    return {id,items:it,g,q:qt,tot,gKN:g*area,qKN:qt*area,comps,tipo:'L'};
+  }
+  const tel = (P.ct+P.cm)/cos;
+  out.L1 = laje('L1',[
+    {nome:'Peso próprio',calc:`${n(gc,0)} × ${n(P.hl/100)} m`,v:gc*P.hl/100,k:'pp'},
+    {nome:'Reboco sob a laje',calc:`${n(ga,0)} × ${n(P.cr/100)} m`,v:ga*P.cr/100,k:'rev'},
+    {nome:'Forro',calc:'informado',v:P.cf,k:'cob'},
+    {nome:'Telha + madeiramento',calc:`(${n(P.ct)} + ${n(P.cm)}) ÷ ${n(cos,3)}`,v:tel,k:'cob'}
+  ], P.cq, 'Sobrecarga de cobertura');
+  out.L11 = laje('L11',[
+    {nome:'Peso próprio',calc:`${n(gc,0)} × ${n(P.hl/100)} m`,v:gc*P.hl/100,k:'pp'},
+    {nome:'Revestimento do piso',calc:`${n(ga,0)} × ${n(P.rp/100)} m`,v:ga*P.rp/100,k:'rev'},
+    {nome:'Reboco sob a laje',calc:`${n(ga,0)} × ${n(P.rt/100)} m`,v:ga*P.rt/100,k:'rev'}
+  ], P.qp, 'Sobrecarga de uso (residencial)');
+
+  /* vigas */
+  const wm2 = gal*P.we/100 + 2*ga*P.wr/100;
+  function viga(id, lj, wOn){
+    const x = X(id), it = [];
+    const pp = gc*(P.vbw/100)*(P.vh/100)*P.vL;
+    const wall = wOn ? wm2*P.wa*P.wc : 0;
+    const lG = fv*lj.gKN, lQ = fv*lj.qKN;
+    it.push(I('Peso próprio da viga','g',`${n(gc,0)} × ${n(P.vbw/100)} × ${n(P.vh/100)} × ${n(P.vL)} m`,pp,'kN'));
+    if(wOn) it.push(I('Parede','g',`${n(wm2)} kN/m² × ${n(P.wa)} × ${n(P.wc)} m`,wall,'kN'));
+    it.push(I('Parcela da laje – permanente','g',`${n(fv,3)} × ${n(lj.gKN)}`,lG,'kN'));
+    it.push(I('Parcela da laje – acidental','q',`${n(fv,3)} × ${n(lj.qKN)}`,lQ,'kN'));
+    if(x.g) it.push(I('Carga adicional','g','informado',x.g,'kN'));
+    if(x.q) it.push(I('Carga adicional','q','informado',x.q,'kN'));
+    const g = pp+wall+lG+x.g, q = lQ+x.q, tot = g+q, dist = tot/P.vL;
+    it.push(S('Permanente g','soma',g,'kN'), S('Acidental q','soma',q,'kN'),
+      S('Carga total da viga','soma',tot,'kN','res'),
+      S('Carga distribuída',`${n(tot)} ÷ ${n(P.vL)} m`,dist,'kN/m'),
+      S('Carga de cálculo qd',`${n(gf,1)} × ${n(dist)}`,gf*dist,'kN/m'));
+    return {id,items:it,g,q,tot,dist,comps:{pp,parede:wall,lajeG:lG,lajeQ:lQ,extra:x.g+x.q},tipo:'V'};
+  }
+  out.V2  = viga('V2',  out.L1,  $('w_V2').checked);
+  out.V22 = viga('V22', out.L11, $('w_V22').checked);
+
+  /* pilares e fundação */
+  function pilar(id, partes, comPP, rotNk){
+    const x = X(id), it = [];
+    let g = 0, q = 0, comps = C0();
+    partes.forEach(p => {
+      const gv = p.k*p.obj.g, qv = p.k*p.obj.q;
+      const ct = (v) => p.k===1 ? '1/1' : `${n(p.k,3)} × ${n(v)}`;
+      it.push(I(`${p.nome} – permanente`,'g',ct(p.obj.g),gv,'kN'));
+      it.push(I(`${p.nome} – acidental`,'q',ct(p.obj.q),qv,'kN'));
+      g += gv; q += qv; comps = addC(comps,p.obj.comps,p.k);
+    });
+    if(comPP){
+      const pp = gc*(P.pb/100)*(P.ph/100)*P.pd;
+      it.push(I('Peso próprio do pilar','g',`${n(gc,0)} × ${n(P.pb/100)} × ${n(P.ph/100)} × ${n(P.pd)} m`,pp,'kN'));
+      g += pp; comps.pp += pp;
+    }
+    if(x.g){ it.push(I('Carga adicional','g','informado',x.g,'kN')); g += x.g; }
+    if(x.q){ it.push(I('Carga adicional','q','informado',x.q,'kN')); q += x.q; }
+    comps.extra += x.g + x.q;
+    const tot = g+q;
+    it.push(S('Permanente g','soma',g,'kN'), S('Acidental q','soma',q,'kN'),
+      S(rotNk,'soma',tot,'kN','res'),
+      S('Nd (cálculo)',`${n(gf,1)} × ${n(tot)}`,gf*tot,'kN','res'));
+    return {id,items:it,g,q,tot,Nd:gf*tot,comps,tipo:'P'};
+  }
+  out.P3  = pilar('P3',  [{nome:'Carga da viga de cobertura',obj:out.V2,k:fp}], true, 'Nk (característica)');
+  out.P33 = pilar('P33', [{nome:'Pilar da cobertura',obj:out.P3,k:1},{nome:'Viga do piso',obj:out.V22,k:fp}], true, 'Nk (característica)');
+
+  (function(){
+    const id='B23', x=X(id), it=[];
+    const pp = gc*(P.bbw/100)*(P.bh/100)*P.vL;
+    const wall = $('w_B23').checked ? wm2*P.wa*P.wc : 0;
+    it.push(I('Peso próprio do baldrame','g',`${n(gc,0)} × ${n(P.bbw/100)} × ${n(P.bh/100)} × ${n(P.vL)} m`,pp,'kN'));
+    if($('w_B23').checked) it.push(I('Parede','g',`${n(wm2)} kN/m² × ${n(P.wa)} × ${n(P.wc)} m`,wall,'kN'));
+    if(x.g) it.push(I('Carga adicional','g','informado',x.g,'kN'));
+    if(x.q) it.push(I('Carga adicional','q','informado',x.q,'kN'));
+    const g = pp+wall+x.g, q = x.q, tot = g+q, dist = tot/P.vL;
+    it.push(S('Permanente g','soma',g,'kN'), S('Acidental q','soma',q,'kN'),
+      S('Carga total do baldrame','soma',tot,'kN','res'),
+      S('Carga distribuída',`${n(tot)} ÷ ${n(P.vL)} m`,dist,'kN/m'),
+      S('Carga de cálculo qd',`${n(gf,1)} × ${n(dist)}`,gf*dist,'kN/m'));
+    out.B23 = {id,items:it,g,q,tot,dist,comps:{pp,parede:wall,lajeG:0,lajeQ:0,extra:x.g+x.q},tipo:'V'};
+  })();
+  out.FUN = pilar('FUN', [{nome:'Pilar do piso',obj:out.P33,k:1},{nome:'Viga baldrame',obj:out.B23,k:fp}], false, 'Nk na fundação');
+  return out;
+}
+
+/* ===== renderização ===== */
+function valorCadeia(id,o){
+  if(o.tipo==='L') return `${n(o.tot)} kN/m²`;
+  if(o.tipo==='V') return `${n(o.tot)} kN · ${n(o.dist)} kN/m`;
+  return `Nk ${n(o.tot)} · Nd ${n(o.Nd)} kN`;
+}
+function nomeDim(id,m){
+  if(id==='V2'||id==='V22') return `${m[2]} ${n(num('in_vbw'),0)}×${n(num('in_vh'),0)}`;
+  if(id==='B23') return `${m[2]} ${n(num('in_bbw'),0)}×${n(num('in_bh'),0)}`;
+  if(id==='P3'||id==='P33') return `${m[2]} ${n(num('in_pb'),0)}×${n(num('in_ph'),0)}`;
+  return m[2];
+}
+function renderCadeia(out){
+  $('cadeia').innerHTML = META.map(m =>
+    `<button type="button" class="elo${m[0]==='FUN'?' fun':''}" data-id="${m[0]}">
+      <span class="c">${m[1]}</span>
+      <span><b>${nomeDim(m[0],m)}</b><small>${m[3]}</small></span>
+      <span class="v">${valorCadeia(m[0],out[m[0]])}</span>
+    </button>`).join('');
+}
+function renderTabela(out){
+  let h = '';
+  META.forEach(m => {
+    const o = out[m[0]];
+    h += `<tr class="grupo" id="el-${m[0]}"><td colspan="5"><span class="tg">${m[1]}</span>${nomeDim(m[0],m)}</td></tr>`;
+    o.items.forEach(r => {
+      if(r.sub){
+        h += `<tr class="${r.sub}"><td>${r.nome}</td><td></td><td class="f">${r.calc}</td><td class="n">${n(r.valor)}</td><td>${r.unid}</td></tr>`;
+      } else {
+        const t = r.tipo==='g' ? '<span class="p-g">Permanente</span>' : '<span class="p-q">Acidental</span>';
+        h += `<tr><td>${r.nome}</td><td>${t}</td><td class="f">${r.calc}</td><td class="n">${n(r.valor)}</td><td>${r.unid}</td></tr>`;
+      }
+    });
+  });
+  $('tabela').innerHTML = h;
+}
+
+function passo(max){
+  const base = max/5, p = Math.pow(10,Math.floor(Math.log10(base||1)));
+  for(const f of [1,2,2.5,5,10]) if(f*p >= base) return f*p;
+  return 10*p;
+}
+function empilhado(elId, legId, linhas, chaves, unid, dec){
+  const W=760, labW=210, padR=100, rowH=46, top=14;
+  const tot = r => chaves.reduce((s,k)=>s+(r.comps[k[0]]||0),0);
+  const max = Math.max(...linhas.map(tot),0.001);
+  const st = passo(max), nmax = st*Math.ceil(max/st), esc = (W-labW-padR)/nmax;
+  const H = top + linhas.length*rowH + 34;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img">`;
+  for(let v=0; v<=nmax+1e-9; v+=st){
+    const x = labW + v*esc;
+    s += `<line x1="${x}" x2="${x}" y1="${top-4}" y2="${H-30}" stroke="#d3dde5"/>`;
+    s += `<text x="${x}" y="${H-14}" font-size="11" fill="#5b6b7a" text-anchor="middle">${n(v,st<1?1:0)}</text>`;
+  }
+  s += `<text x="${W-padR+26}" y="${H-14}" font-size="11" fill="#5b6b7a">${unid}</text>`;
+  linhas.forEach((r,i) => {
+    const y = top + i*rowH + 6; let x = labW;
+    s += `<text x="${labW-10}" y="${y+19}" font-size="12.5" fill="#12263a" text-anchor="end">${r.label}</text>`;
+    chaves.forEach(k => {
+      const v = r.comps[k[0]]||0; if(v<=0) return;
+      const w = v*esc;
+      s += `<rect x="${x}" y="${y}" width="${w}" height="30" fill="${k[2]}"><title>${k[1]}: ${n(v)} ${unid}</title></rect>`;
+      if(w>38) s += `<text x="${x+w/2}" y="${y+19}" font-size="11" fill="${['#f2b705','#7fb3c9','#d9a36f'].includes(k[2])?'#12263a':'#fff'}" text-anchor="middle">${n(v,dec)}</text>`;
+      x += w;
+    });
+    s += `<text x="${x+8}" y="${y+19}" font-size="12.5" font-weight="700" fill="#12263a">${n(tot(r),dec)}</text>`;
+  });
+  s += `</svg>`;
+  $(elId).innerHTML = s;
+  $(legId).innerHTML = chaves.map(k => `<span><i style="background:${k[2]}"></i>${k[1]}</span>`).join('');
+}
+function renderGraficos(out){
+  empilhado('gA','lA',[
+    {label:'1  Laje de cobertura',comps:out.L1.comps},
+    {label:'1.1  Laje de piso',comps:out.L11.comps}
+  ],[['pp','Peso próprio','#2b6f8f'],['rev','Reboco e revestimento','#7fb3c9'],['cob','Forro e telhado','#d9a36f'],['extra','Adicionais','#8a97a3'],['q','Acidental','#f2b705']],'kN/m²',2);
+  empilhado('gB','lB',[
+    {label:'2  Viga de cobertura',comps:out.V2.comps},
+    {label:'3  Pilar da cobertura',comps:out.P3.comps},
+    {label:'2.2  Viga do piso',comps:out.V22.comps},
+    {label:'3.3  Pilar do piso',comps:out.P33.comps},
+    {label:'2.3  Viga baldrame',comps:out.B23.comps},
+    {label:'Fundação',comps:out.FUN.comps}
+  ],[['pp','Peso próprio da estrutura','#12263a'],['parede','Paredes','#4b5563'],['lajeG','Lajes (permanente)','#2b6f8f'],['lajeQ','Lajes (acidental)','#f2b705'],['extra','Adicionais','#8a97a3']],'kN',1);
+}
+
+let ultimo = null;
+function atualizar(){
+  ultimo = calcular();
+  renderCadeia(ultimo); renderTabela(ultimo); renderGraficos(ultimo);
+  salvar();
+}
+
+/* ===== interação ===== */
+function ir(id){
+  const t = $('el-'+id); if(!t) return;
+  t.scrollIntoView({behavior:'smooth',block:'start'});
+  t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash');
+}
+document.addEventListener('click', e => { const t = e.target.closest('[data-id]'); if(t) ir(t.dataset.id); });
+document.addEventListener('keydown', e => { if((e.key==='Enter'||e.key===' ') && e.target.classList && e.target.classList.contains('tag')){ e.preventDefault(); ir(e.target.dataset.id); } });
+document.addEventListener('input', e => { if(e.target.classList.contains('sv')) atualizar(); });
+document.addEventListener('change', e => { if(e.target.classList.contains('sv')) atualizar(); });
+
+function salvar(){
+  try{
+    const o = {};
+    document.querySelectorAll('.sv').forEach(e => o[e.id] = e.type==='checkbox' ? e.checked : e.value);
+    localStorage.setItem(KEY, JSON.stringify(o));
+  }catch(err){}
+}
+function carregar(){
+  try{
+    const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if(!o) return;
+    document.querySelectorAll('.sv').forEach(e => { if(e.id in o){ if(e.type==='checkbox') e.checked = !!o[e.id]; else e.value = o[e.id]; } });
+  }catch(err){}
+}
+$('bReset').addEventListener('click', () => {
+  document.querySelectorAll('.sv').forEach(e => {
+    if(e.id==='titulo') { e.value = 'Cargas da estrutura – sobrado de dois pavimentos'; return; }
+    if(e.type==='checkbox') e.checked = e.dataset.def==='1'; else e.value = String(e.dataset.def).replace('.',',');
+  });
+  atualizar();
+});
+$('bCsv').addEventListener('click', () => {
+  const linhas = [['Elemento','Item','Tipo','Cálculo','Valor','Unidade']];
+  META.forEach(m => ultimo[m[0]].items.forEach(r =>
+    linhas.push([m[1]+' '+nomeDim(m[0],m), r.nome, r.sub ? '' : (r.tipo==='g'?'Permanente':'Acidental'), r.calc, n(r.valor), r.unid])));
+  const csv = '\ufeff' + linhas.map(l => l.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(';')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download = 'cargas-estrutura.csv'; a.click();
+});
+
+carregar();
+atualizar();
+</script>
+</body>
+</html>
